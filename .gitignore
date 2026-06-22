@@ -47,3 +47,5 @@ next-env.d.ts
 
 # Note: data/ledger.jsonl IS committed — it is the reproducible paper-trading
 # proof-of-run artifact for the hackathon submission (PRD §22).
+
+.vercel

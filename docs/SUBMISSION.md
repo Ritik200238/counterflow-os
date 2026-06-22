@@ -2,6 +2,8 @@
 
 **Track:** Bitget AI Base Camp Hackathon S1 — Stock AI Trading
 **One-liner:** The strategy router for agentic tokenized-equity trading. _Trade the regime, not the signal._
+**Live demo:** https://counterflow-os.vercel.app
+**Repo:** https://github.com/Ritik200238/counterflow-os
 
 ---
 
@@ -54,7 +56,8 @@ on the roadmap).
 
 | Requirement | Status |
 | --- | --- |
-| Public GitHub repo | ⏳ push needed (see steps below) |
+| Public GitHub repo | ✅ https://github.com/Ritik200238/counterflow-os |
+| Live demo URL | ✅ https://counterflow-os.vercel.app |
 | README with setup/run | ✅ `README.md` |
 | Install / run instructions | ✅ README quickstart + CLI |
 | Demo video (< 3 min) | ⏳ script ready in `docs/DEMO.md` |
@@ -74,11 +77,13 @@ on the roadmap).
 ## Human-only steps remaining
 
 1. **Resolve the Qwen key** — the provided key returns HTTP 401 from DashScope (likely truncated
-   or needs a Bitget-specific base URL). Put a valid key in `.env` (`DASHSCOPE_API_KEY`); the AI
-   debate then activates with zero code changes. Optional — the product is fully functional without it.
-2. **Push to a public GitHub repo** (see below).
-3. **Record the < 3 min demo** following `docs/DEMO.md`.
-4. **Submit** the repo link + video + this description to the hackathon portal.
+   or needs a Bitget-specific base URL). Add it in the Vercel project env (`DASHSCOPE_API_KEY`)
+   and/or local `.env`; the AI debate then activates with zero code changes. Optional — the
+   product is fully functional without it.
+2. **Record the < 3 min demo** following `docs/DEMO.md` (point it at the live URL above).
+3. **Submit** the repo link + live URL + video + this description to the hackathon portal.
+
+_Done: public repo pushed, production deploy live at https://counterflow-os.vercel.app._
 
 ### Push to GitHub
 

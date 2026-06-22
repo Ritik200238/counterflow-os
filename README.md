@@ -7,6 +7,8 @@ CounterFlow OS is an autonomous **strategy-routing and proof layer** for 24/7 to
 
 > Built for the **Bitget AI Base Camp Hackathon S1 — Stock AI Trading** track.
 
+**🔗 Live demo: [counterflow-os.vercel.app](https://counterflow-os.vercel.app)** · **Repo: [github.com/Ritik200238/counterflow-os](https://github.com/Ritik200238/counterflow-os)**
+
 ![Dashboard](docs/screenshots/dashboard.png)
 
 ---
