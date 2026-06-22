@@ -1,0 +1,1205 @@
+{
+  "decisions": [
+    {
+      "packet": {
+        "decisionId": "cfos_2026_0001",
+        "timestamp": "2026-06-21T03:30:00.000Z",
+        "asset": "NVDAx",
+        "marketRegime": "Clean Trend",
+        "regimeConfidence": 0.925,
+        "regimeSignals": [
+          "Confirmed directional move",
+          "Sector / index confirms",
+          "Cross-market aligned",
+          "Not crowded",
+          "Fair value in range",
+          "No event risk"
+        ],
+        "selectedStrategy": "Momentum Follow",
+        "rejectedStrategies": [
+          {
+            "strategy": "CounterFlow Fade",
+            "reason": "Crowding not extreme (CrowdScore 25 < 65)"
+          },
+          {
+            "strategy": "Fair-Value Convergence",
+            "reason": "Fair-value gap not statistically significant"
+          },
+          {
+            "strategy": "No-Trade / Risk-Off",
+            "reason": "Confidence above execution threshold; an edge is present."
+          }
+        ],
+        "direction": "long",
+        "scores": {
+          "crowdScore": 25,
+          "fairValueGapPct": 0.26,
+          "regimeConfidence": 0.925,
+          "strategyConfidence": 0.87,
+          "liquidityScore": 0.91,
+          "riskScore": 0.071
+        },
+        "market": {
+          "tokenPrice": 171.37,
+          "estimatedFairValue": 170.93,
+          "underlyingPrice": 169.84,
+          "underlyingMarketOpen": false,
+          "spreadPct": 0.118
+        },
+        "council": [
+          {
+            "agent": "Macro",
+            "vote": {
+              "stance": "follow",
+              "confidence": 0.52
+            },
+            "summary": "Nasdaq futures positive, yields stable — risk-on backdrop.",
+            "data": {
+              "macro_regime": "risk_on",
+              "risk_level": "low",
+              "nasdaq_futures_pct": 0.8,
+              "yields_change_bps": 1,
+              "dxy_pct": -0.01,
+              "macro_event": "none"
+            }
+          },
+          {
+            "agent": "News",
+            "vote": {
+              "stance": "follow",
+              "confidence": 0.68
+            },
+            "summary": "Strong, well-supported catalyst aligned with direction.",
+            "data": {
+              "sentiment": "positive",
+              "sentiment_score": 0.79,
+              "catalyst_strength": 0.54,
+              "evidence_quality": 0.83,
+              "news_intensity": 0.65
+            }
+          },
+          {
+            "agent": "Fair-Value",
+            "vote": {
+              "stance": "neutral",
+              "confidence": 0.37
+            },
+            "summary": "Token within normal range of fair value (0.26%).",
+            "data": {
+              "estimated_fair_value": 170.93,
+              "token_price": 171.37,
+              "fair_value_gap_pct": 0.26,
+              "gap_status": "fair",
+              "underlying_market_open": false
+            }
+          },
+          {
+            "agent": "Crowd",
+            "vote": {
+              "stance": "follow",
+              "confidence": 0.65
+            },
+            "summary": "CrowdScore 25 (Clean) — move looks genuine, safe to follow.",
+            "data": {
+              "crowd_score": 25,
+              "crowd_state": "Clean",
+              "recommendation": "follow"
+            }
+          },
+          {
+            "agent": "Technical",
+            "vote": {
+              "stance": "follow",
+              "confidence": 0.66
+            },
+            "summary": "breakout confirmed by sector with trend strength 0.62.",
+            "data": {
+              "technical_state": "breakout",
+              "trend_strength": 0.62,
+              "confirmation": true,
+              "price_velocity_pct": 2.84
+            }
+          },
+          {
+            "agent": "Liquidity",
+            "vote": {
+              "stance": "neutral",
+              "confidence": 0.44
+            },
+            "summary": "Liquidity tradable (score 0.91); slippage ~0.073%.",
+            "data": {
+              "liquidity_status": "tradable",
+              "liquidity_score": 0.91,
+              "slippage_estimate_pct": 0.073
+            }
+          },
+          {
+            "agent": "Risk",
+            "vote": {
+              "stance": "neutral",
+              "confidence": 0.43
+            },
+            "summary": "Risk score 0.071 normal.",
+            "data": {
+              "risk_score": 0.071,
+              "event_risk": false,
+              "volatility_pct": 1.44
+            }
+          },
+          {
+            "agent": "Strategy Router",
+            "vote": {
+              "stance": "follow",
+              "confidence": 0.87
+            },
+            "summary": "Momentum Follow fits the Clean Trend regime with the strongest setup score (0.765).",
+            "data": {
+              "selected_strategy": "Momentum Follow",
+              "direction": "long",
+              "confidence": 0.87,
+              "regime": "Clean Trend",
+              "agent_agreement": "8/8"
+            }
+          }
+        ],
+        "agentAgreement": {
+          "agree": 8,
+          "total": 8
+        },
+        "risk": {
+          "approved": true,
+          "riskState": "Normal",
+          "positionSizePct": 11.7,
+          "stopLossPct": 1.5,
+          "takeProfitPct": 3,
+          "maxLossPct": 1.5,
+          "reasons": [
+            "Approved: size 11.7% of portfolio, stop 1.5%, take-profit 3% (Normal)."
+          ],
+          "blocks": []
+        },
+        "finalAction": "long_paper",
+        "rationale": "NVDAx: Clean Trend regime with CrowdScore 25 and a 0.26% fair-value gap. Momentum Follow selected — Long paper trade.",
+        "debate": "Council deliberation for NVDAx — detected regime: Clean Trend (confidence 93%). Agreement 8/8.\n• Macro: Nasdaq futures positive, yields stable — risk-on backdrop.\n• News: Strong, well-supported catalyst aligned with direction.\n• Fair-Value: Token within normal range of fair value (0.26%).\n• Crowd: CrowdScore 25 (Clean) — move looks genuine, safe to follow.\n• Technical: breakout confirmed by sector with trend strength 0.62.\n• Liquidity: Liquidity tradable (score 0.91); slippage ~0.073%.\n• Risk: Risk score 0.071 normal.\n→ Risk Governor approved at 11.7% size (stop 1.5%, take-profit 3%, Normal).",
+        "reasoningSource": "deterministic",
+        "dataFreshness": "Passed",
+        "dataSourcesUsed": [
+          "tokenized price feed (sim)",
+          "underlying equity proxy",
+          "sector index / ETF",
+          "Nasdaq futures",
+          "news & sentiment feed",
+          "macro/earnings calendar"
+        ]
+      },
+      "ledgerEntry": {
+        "decisionId": "cfos_2026_0001",
+        "timestamp": "2026-06-21T03:30:00.000Z",
+        "asset": "NVDAx",
+        "tokenPrice": 171.37,
+        "estimatedFairValue": 170.93,
+        "fairValueGapPct": 0.26,
+        "marketRegime": "Clean Trend",
+        "selectedStrategy": "Momentum Follow",
+        "rejectedStrategies": [
+          "CounterFlow Fade",
+          "Fair-Value Convergence",
+          "No-Trade / Risk-Off"
+        ],
+        "crowdScore": 25,
+        "regimeConfidence": 0.925,
+        "strategyConfidence": 0.87,
+        "liquidityScore": 0.91,
+        "direction": "long",
+        "entryPrice": 171.37,
+        "exitPrice": 168.7995,
+        "positionSizePct": 11.7,
+        "stopLossPct": 1.5,
+        "takeProfitPct": 3,
+        "pnlPct": -1.711,
+        "pnlValue": -0.2002,
+        "status": "closed",
+        "exitReason": "stop_loss",
+        "holdMinutes": 240,
+        "agentRationale": "NVDAx: Clean Trend regime with CrowdScore 25 and a 0.26% fair-value gap. Momentum Follow selected — Long paper trade.",
+        "dataSourcesUsed": [
+          "tokenized price feed (sim)",
+          "underlying equity proxy",
+          "sector index / ETF",
+          "Nasdaq futures",
+          "news & sentiment feed",
+          "macro/earnings calendar"
+        ],
+        "riskState": "Normal"
+      }
+    },
+    {
+      "packet": {
+        "decisionId": "cfos_2026_0002",
+        "timestamp": "2026-06-21T03:30:00.000Z",
+        "asset": "TSLAx",
+        "marketRegime": "Crowded Hype",
+        "regimeConfidence": 0.631,
+        "regimeSignals": [
+          "Extreme crowd score",
+          "Hype / social spike",
+          "Token outruns fair value",
+          "Weak sector confirmation",
+          "Weak news evidence"
+        ],
+        "selectedStrategy": "CounterFlow Fade",
+        "rejectedStrategies": [
+          {
+            "strategy": "Momentum Follow",
+            "reason": "Sector / index confirmation weak"
+          },
+          {
+            "strategy": "Fair-Value Convergence",
+            "reason": "News may explain the gap"
+          },
+          {
+            "strategy": "No-Trade / Risk-Off",
+            "reason": "Confidence above execution threshold; an edge is present."
+          }
+        ],
+        "direction": "short",
+        "scores": {
+          "crowdScore": 73,
+          "fairValueGapPct": 3.7,
+          "regimeConfidence": 0.631,
+          "strategyConfidence": 0.828,
+          "liquidityScore": 0.736,
+          "riskScore": 0.393
+        },
+        "market": {
+          "tokenPrice": 354.42,
+          "estimatedFairValue": 341.78,
+          "underlyingPrice": 342.51,
+          "underlyingMarketOpen": false,
+          "spreadPct": 0.35
+        },
+        "council": [
+          {
+            "agent": "Macro",
+            "vote": {
+              "stance": "neutral",
+              "confidence": 0.44
+            },
+            "summary": "Mixed macro backdrop, no decisive risk signal.",
+            "data": {
+              "macro_regime": "neutral",
+              "risk_level": "high",
+              "nasdaq_futures_pct": -0.24,
+              "yields_change_bps": 0.6,
+              "dxy_pct": -0.16,
+              "macro_event": "none"
+            }
+          },
+          {
+            "agent": "News",
+            "vote": {
+              "stance": "fade",
+              "confidence": 0.8
+            },
+            "summary": "High news intensity but weak evidence quality — looks like a hype catalyst.",
+            "data": {
+              "sentiment": "positive",
+              "sentiment_score": 0.69,
+              "catalyst_strength": 0.33,
+              "evidence_quality": 0.37,
+              "news_intensity": 0.89
+            }
+          },
+          {
+            "agent": "Fair-Value",
+            "vote": {
+              "stance": "converge",
+              "confidence": 1
+            },
+            "summary": "Token overvalued by 3.70% vs estimated fair value; unexplained tracking error.",
+            "data": {
+              "estimated_fair_value": 341.78,
+              "token_price": 354.42,
+              "fair_value_gap_pct": 3.7,
+              "gap_status": "overvalued",
+              "underlying_market_open": false
+            }
+          },
+          {
+            "agent": "Crowd",
+            "vote": {
+              "stance": "fade",
+              "confidence": 0.63
+            },
+            "summary": "CrowdScore 73 (Crowded) — overreaction risk, prefer to fade.",
+            "data": {
+              "crowd_score": 73,
+              "crowd_state": "Crowded",
+              "recommendation": "fade"
+            }
+          },
+          {
+            "agent": "Technical",
+            "vote": {
+              "stance": "fade",
+              "confidence": 0.63
+            },
+            "summary": "Move is technically overextended into crowded conditions — reversal risk.",
+            "data": {
+              "technical_state": "uptrend",
+              "trend_strength": 0.55,
+              "confirmation": false,
+              "price_velocity_pct": 3.55
+            }
+          },
+          {
+            "agent": "Liquidity",
+            "vote": {
+              "stance": "neutral",
+              "confidence": 0.51
+            },
+            "summary": "Liquidity tradable (score 0.736); slippage ~0.256%.",
+            "data": {
+              "liquidity_status": "tradable",
+              "liquidity_score": 0.736,
+              "slippage_estimate_pct": 0.256
+            }
+          },
+          {
+            "agent": "Risk",
+            "vote": {
+              "stance": "neutral",
+              "confidence": 0.56
+            },
+            "summary": "Risk score 0.393 normal.",
+            "data": {
+              "risk_score": 0.393,
+              "event_risk": false,
+              "volatility_pct": 4.05
+            }
+          },
+          {
+            "agent": "Strategy Router",
+            "vote": {
+              "stance": "fade",
+              "confidence": 0.828
+            },
+            "summary": "CounterFlow Fade fits the Crowded Hype regime with the strongest setup score (0.811).",
+            "data": {
+              "selected_strategy": "CounterFlow Fade",
+              "direction": "short",
+              "confidence": 0.828,
+              "regime": "Crowded Hype",
+              "agent_agreement": "8/8"
+            }
+          }
+        ],
+        "agentAgreement": {
+          "agree": 8,
+          "total": 8
+        },
+        "risk": {
+          "approved": true,
+          "riskState": "Normal",
+          "positionSizePct": 9.7,
+          "stopLossPct": 1.2,
+          "takeProfitPct": 2.4,
+          "maxLossPct": 1.2,
+          "reasons": [
+            "Approved: size 9.7% of portfolio, stop 1.2%, take-profit 2.4% (Normal)."
+          ],
+          "blocks": []
+        },
+        "finalAction": "short_paper",
+        "rationale": "TSLAx: Crowded Hype regime with CrowdScore 73 and a 3.70% fair-value gap. CounterFlow Fade selected — Short paper trade.",
+        "debate": "Council deliberation for TSLAx — detected regime: Crowded Hype (confidence 63%). Agreement 8/8.\n• Macro: Mixed macro backdrop, no decisive risk signal.\n• News: High news intensity but weak evidence quality — looks like a hype catalyst.\n• Fair-Value: Token overvalued by 3.70% vs estimated fair value; unexplained tracking error.\n• Crowd: CrowdScore 73 (Crowded) — overreaction risk, prefer to fade.\n• Technical: Move is technically overextended into crowded conditions — reversal risk.\n• Liquidity: Liquidity tradable (score 0.736); slippage ~0.256%.\n• Risk: Risk score 0.393 normal.\n→ Risk Governor approved at 9.7% size (stop 1.2%, take-profit 2.4%, Normal).",
+        "reasoningSource": "deterministic",
+        "dataFreshness": "Passed",
+        "dataSourcesUsed": [
+          "tokenized price feed (sim)",
+          "underlying equity proxy",
+          "sector index / ETF",
+          "Nasdaq futures",
+          "news & sentiment feed",
+          "macro/earnings calendar"
+        ]
+      },
+      "ledgerEntry": {
+        "decisionId": "cfos_2026_0002",
+        "timestamp": "2026-06-21T03:30:00.000Z",
+        "asset": "TSLAx",
+        "tokenPrice": 354.42,
+        "estimatedFairValue": 341.78,
+        "fairValueGapPct": 3.7,
+        "marketRegime": "Crowded Hype",
+        "selectedStrategy": "CounterFlow Fade",
+        "rejectedStrategies": [
+          "Momentum Follow",
+          "Fair-Value Convergence",
+          "No-Trade / Risk-Off"
+        ],
+        "crowdScore": 73,
+        "regimeConfidence": 0.631,
+        "strategyConfidence": 0.828,
+        "liquidityScore": 0.736,
+        "direction": "short",
+        "entryPrice": 354.42,
+        "exitPrice": 358.673,
+        "positionSizePct": 9.7,
+        "stopLossPct": 1.2,
+        "takeProfitPct": 2.4,
+        "pnlPct": -1.826,
+        "pnlValue": -0.1771,
+        "status": "closed",
+        "exitReason": "stop_loss",
+        "holdMinutes": 270,
+        "agentRationale": "TSLAx: Crowded Hype regime with CrowdScore 73 and a 3.70% fair-value gap. CounterFlow Fade selected — Short paper trade.",
+        "dataSourcesUsed": [
+          "tokenized price feed (sim)",
+          "underlying equity proxy",
+          "sector index / ETF",
+          "Nasdaq futures",
+          "news & sentiment feed",
+          "macro/earnings calendar"
+        ],
+        "riskState": "Normal"
+      }
+    },
+    {
+      "packet": {
+        "decisionId": "cfos_2026_0003",
+        "timestamp": "2026-06-21T03:30:00.000Z",
+        "asset": "AAPLx",
+        "marketRegime": "Noise",
+        "regimeConfidence": 0.413,
+        "regimeSignals": [
+          "Low-conviction move",
+          "Conflicting sentiment",
+          "No clear catalyst",
+          "Thin volume",
+          "Stale / unreliable data"
+        ],
+        "selectedStrategy": "No-Trade / Risk-Off",
+        "rejectedStrategies": [
+          {
+            "strategy": "Momentum Follow",
+            "reason": "Sector / index confirmation weak"
+          },
+          {
+            "strategy": "CounterFlow Fade",
+            "reason": "Crowding not extreme (CrowdScore 31 < 65)"
+          },
+          {
+            "strategy": "Fair-Value Convergence",
+            "reason": "Fair-value gap not statistically significant"
+          }
+        ],
+        "direction": "flat",
+        "scores": {
+          "crowdScore": 31,
+          "fairValueGapPct": 0.18,
+          "regimeConfidence": 0.413,
+          "strategyConfidence": 0.801,
+          "liquidityScore": 0.431,
+          "riskScore": 0.337
+        },
+        "market": {
+          "tokenPrice": 212.27,
+          "estimatedFairValue": 211.88,
+          "underlyingPrice": 211.79,
+          "underlyingMarketOpen": false,
+          "spreadPct": 0.382
+        },
+        "council": [
+          {
+            "agent": "Macro",
+            "vote": {
+              "stance": "neutral",
+              "confidence": 0.41
+            },
+            "summary": "Mixed macro backdrop, no decisive risk signal.",
+            "data": {
+              "macro_regime": "neutral",
+              "risk_level": "medium",
+              "nasdaq_futures_pct": 0.08,
+              "yields_change_bps": -0.2,
+              "dxy_pct": -0.28,
+              "macro_event": "none"
+            }
+          },
+          {
+            "agent": "News",
+            "vote": {
+              "stance": "neutral",
+              "confidence": 0.64
+            },
+            "summary": "No decisive catalyst; news is neutral or thin.",
+            "data": {
+              "sentiment": "neutral",
+              "sentiment_score": 0.14,
+              "catalyst_strength": 0.19,
+              "evidence_quality": 0.32,
+              "news_intensity": 0.58
+            }
+          },
+          {
+            "agent": "Fair-Value",
+            "vote": {
+              "stance": "neutral",
+              "confidence": 0.35
+            },
+            "summary": "Token within normal range of fair value (0.18%).",
+            "data": {
+              "estimated_fair_value": 211.88,
+              "token_price": 212.27,
+              "fair_value_gap_pct": 0.18,
+              "gap_status": "fair",
+              "underlying_market_open": false
+            }
+          },
+          {
+            "agent": "Crowd",
+            "vote": {
+              "stance": "neutral",
+              "confidence": 0.59
+            },
+            "summary": "CrowdScore 31 (Mixed) — ambiguous; no crowd edge.",
+            "data": {
+              "crowd_score": 31,
+              "crowd_state": "Mixed",
+              "recommendation": "avoid"
+            }
+          },
+          {
+            "agent": "Technical",
+            "vote": {
+              "stance": "neutral",
+              "confidence": 0.36
+            },
+            "summary": "No clean technical structure; price action unconfirmed.",
+            "data": {
+              "technical_state": "range",
+              "trend_strength": 0.02,
+              "confirmation": false,
+              "price_velocity_pct": 0.11
+            }
+          },
+          {
+            "agent": "Liquidity",
+            "vote": {
+              "stance": "neutral",
+              "confidence": 0.63
+            },
+            "summary": "Liquidity thin (score 0.431); slippage ~0.291%.",
+            "data": {
+              "liquidity_status": "thin",
+              "liquidity_score": 0.431,
+              "slippage_estimate_pct": 0.291
+            }
+          },
+          {
+            "agent": "Risk",
+            "vote": {
+              "stance": "neutral",
+              "confidence": 0.53
+            },
+            "summary": "Risk score 0.337 normal.",
+            "data": {
+              "risk_score": 0.337,
+              "event_risk": false,
+              "volatility_pct": 2.74
+            }
+          },
+          {
+            "agent": "Strategy Router",
+            "vote": {
+              "stance": "avoid",
+              "confidence": 0.801
+            },
+            "summary": "No strategy meets its entry conditions in the current regime.",
+            "data": {
+              "selected_strategy": "No-Trade / Risk-Off",
+              "direction": "flat",
+              "confidence": 0.801,
+              "regime": "Noise",
+              "agent_agreement": "8/8"
+            }
+          }
+        ],
+        "agentAgreement": {
+          "agree": 8,
+          "total": 8
+        },
+        "risk": {
+          "approved": false,
+          "riskState": "Normal",
+          "positionSizePct": 0,
+          "stopLossPct": 0,
+          "takeProfitPct": 0,
+          "maxLossPct": 0,
+          "reasons": [
+            "No position — router selected No-Trade / Risk-Off."
+          ],
+          "blocks": []
+        },
+        "finalAction": "no_trade",
+        "rationale": "AAPLx: Noise regime — No paper trade taken. no qualifying edge.",
+        "debate": "Council deliberation for AAPLx — detected regime: Noise (confidence 41%). Agreement 8/8.\n• Macro: Mixed macro backdrop, no decisive risk signal.\n• News: No decisive catalyst; news is neutral or thin.\n• Fair-Value: Token within normal range of fair value (0.18%).\n• Crowd: CrowdScore 31 (Mixed) — ambiguous; no crowd edge.\n• Technical: No clean technical structure; price action unconfirmed.\n• Liquidity: Liquidity thin (score 0.431); slippage ~0.291%.\n• Risk: Risk score 0.337 normal.\n→ Risk Governor: no position taken (Normal).",
+        "reasoningSource": "deterministic",
+        "dataFreshness": "Failed",
+        "dataSourcesUsed": [
+          "tokenized price feed (sim)",
+          "underlying equity proxy",
+          "sector index / ETF",
+          "Nasdaq futures",
+          "news & sentiment feed",
+          "macro/earnings calendar"
+        ]
+      },
+      "ledgerEntry": {
+        "decisionId": "cfos_2026_0003",
+        "timestamp": "2026-06-21T03:30:00.000Z",
+        "asset": "AAPLx",
+        "tokenPrice": 212.27,
+        "estimatedFairValue": 211.88,
+        "fairValueGapPct": 0.18,
+        "marketRegime": "Noise",
+        "selectedStrategy": "No-Trade / Risk-Off",
+        "rejectedStrategies": [
+          "Momentum Follow",
+          "CounterFlow Fade",
+          "Fair-Value Convergence"
+        ],
+        "crowdScore": 31,
+        "regimeConfidence": 0.413,
+        "strategyConfidence": 0.801,
+        "liquidityScore": 0.431,
+        "direction": "flat",
+        "entryPrice": null,
+        "exitPrice": null,
+        "positionSizePct": 0,
+        "stopLossPct": 0,
+        "takeProfitPct": 0,
+        "pnlPct": null,
+        "pnlValue": null,
+        "status": "no_trade",
+        "exitReason": "none",
+        "holdMinutes": null,
+        "agentRationale": "AAPLx: Noise regime — No paper trade taken. no qualifying edge.",
+        "dataSourcesUsed": [
+          "tokenized price feed (sim)",
+          "underlying equity proxy",
+          "sector index / ETF",
+          "Nasdaq futures",
+          "news & sentiment feed",
+          "macro/earnings calendar"
+        ],
+        "riskState": "Normal"
+      }
+    },
+    {
+      "packet": {
+        "decisionId": "cfos_2026_0004",
+        "timestamp": "2026-06-21T03:30:00.000Z",
+        "asset": "COINx",
+        "marketRegime": "Fair-Value Gap",
+        "regimeConfidence": 0.868,
+        "regimeSignals": [
+          "Statistically large gap",
+          "No news explains the gap",
+          "Liquidity acceptable",
+          "Low hype",
+          "No event risk"
+        ],
+        "selectedStrategy": "Fair-Value Convergence",
+        "rejectedStrategies": [
+          {
+            "strategy": "Momentum Follow",
+            "reason": "Sector / index confirmation weak"
+          },
+          {
+            "strategy": "CounterFlow Fade",
+            "reason": "Crowding not extreme (CrowdScore 37 < 65)"
+          },
+          {
+            "strategy": "No-Trade / Risk-Off",
+            "reason": "Confidence above execution threshold; an edge is present."
+          }
+        ],
+        "direction": "short",
+        "scores": {
+          "crowdScore": 37,
+          "fairValueGapPct": 3.09,
+          "regimeConfidence": 0.868,
+          "strategyConfidence": 0.79,
+          "liquidityScore": 0.794,
+          "riskScore": 0.101
+        },
+        "market": {
+          "tokenPrice": 261.5,
+          "estimatedFairValue": 253.66,
+          "underlyingPrice": 252.88,
+          "underlyingMarketOpen": false,
+          "spreadPct": 0.15
+        },
+        "council": [
+          {
+            "agent": "Macro",
+            "vote": {
+              "stance": "follow",
+              "confidence": 0.44
+            },
+            "summary": "Nasdaq futures positive, yields stable — risk-on backdrop.",
+            "data": {
+              "macro_regime": "risk_on",
+              "risk_level": "low",
+              "nasdaq_futures_pct": 0.29,
+              "yields_change_bps": 1,
+              "dxy_pct": -0.07,
+              "macro_event": "none"
+            }
+          },
+          {
+            "agent": "News",
+            "vote": {
+              "stance": "neutral",
+              "confidence": 0.52
+            },
+            "summary": "No decisive catalyst; news is neutral or thin.",
+            "data": {
+              "sentiment": "neutral",
+              "sentiment_score": -0.04,
+              "catalyst_strength": 0.18,
+              "evidence_quality": 0.55,
+              "news_intensity": 0.33
+            }
+          },
+          {
+            "agent": "Fair-Value",
+            "vote": {
+              "stance": "converge",
+              "confidence": 1
+            },
+            "summary": "Token overvalued by 3.09% vs estimated fair value; unexplained tracking error.",
+            "data": {
+              "estimated_fair_value": 253.66,
+              "token_price": 261.5,
+              "fair_value_gap_pct": 3.09,
+              "gap_status": "overvalued",
+              "underlying_market_open": false
+            }
+          },
+          {
+            "agent": "Crowd",
+            "vote": {
+              "stance": "neutral",
+              "confidence": 0.53
+            },
+            "summary": "CrowdScore 37 (Mixed) — ambiguous; no crowd edge.",
+            "data": {
+              "crowd_score": 37,
+              "crowd_state": "Mixed",
+              "recommendation": "avoid"
+            }
+          },
+          {
+            "agent": "Technical",
+            "vote": {
+              "stance": "neutral",
+              "confidence": 0.41
+            },
+            "summary": "No clean technical structure; price action unconfirmed.",
+            "data": {
+              "technical_state": "range",
+              "trend_strength": 0.11,
+              "confirmation": false,
+              "price_velocity_pct": 0.61
+            }
+          },
+          {
+            "agent": "Liquidity",
+            "vote": {
+              "stance": "neutral",
+              "confidence": 0.48
+            },
+            "summary": "Liquidity tradable (score 0.794); slippage ~0.106%.",
+            "data": {
+              "liquidity_status": "tradable",
+              "liquidity_score": 0.794,
+              "slippage_estimate_pct": 0.106
+            }
+          },
+          {
+            "agent": "Risk",
+            "vote": {
+              "stance": "neutral",
+              "confidence": 0.44
+            },
+            "summary": "Risk score 0.101 normal.",
+            "data": {
+              "risk_score": 0.101,
+              "event_risk": false,
+              "volatility_pct": 1.39
+            }
+          },
+          {
+            "agent": "Strategy Router",
+            "vote": {
+              "stance": "converge",
+              "confidence": 0.79
+            },
+            "summary": "Fair-Value Convergence fits the Fair-Value Gap regime with the strongest setup score (0.744).",
+            "data": {
+              "selected_strategy": "Fair-Value Convergence",
+              "direction": "short",
+              "confidence": 0.79,
+              "regime": "Fair-Value Gap",
+              "agent_agreement": "7/8"
+            }
+          }
+        ],
+        "agentAgreement": {
+          "agree": 7,
+          "total": 8
+        },
+        "risk": {
+          "approved": true,
+          "riskState": "Normal",
+          "positionSizePct": 10.2,
+          "stopLossPct": 1.2,
+          "takeProfitPct": 2.16,
+          "maxLossPct": 1.2,
+          "reasons": [
+            "Approved: size 10.2% of portfolio, stop 1.2%, take-profit 2.16% (Normal)."
+          ],
+          "blocks": []
+        },
+        "finalAction": "short_paper",
+        "rationale": "COINx: Fair-Value Gap regime with CrowdScore 37 and a 3.09% fair-value gap. Fair-Value Convergence selected — Short paper trade.",
+        "debate": "Council deliberation for COINx — detected regime: Fair-Value Gap (confidence 87%). Agreement 7/8.\n• Macro: Nasdaq futures positive, yields stable — risk-on backdrop.\n• News: No decisive catalyst; news is neutral or thin.\n• Fair-Value: Token overvalued by 3.09% vs estimated fair value; unexplained tracking error.\n• Crowd: CrowdScore 37 (Mixed) — ambiguous; no crowd edge.\n• Technical: No clean technical structure; price action unconfirmed.\n• Liquidity: Liquidity tradable (score 0.794); slippage ~0.106%.\n• Risk: Risk score 0.101 normal.\n→ Risk Governor approved at 10.2% size (stop 1.2%, take-profit 2.16%, Normal).",
+        "reasoningSource": "deterministic",
+        "dataFreshness": "Passed",
+        "dataSourcesUsed": [
+          "tokenized price feed (sim)",
+          "underlying equity proxy",
+          "sector index / ETF",
+          "Nasdaq futures",
+          "news & sentiment feed",
+          "macro/earnings calendar"
+        ]
+      },
+      "ledgerEntry": {
+        "decisionId": "cfos_2026_0004",
+        "timestamp": "2026-06-21T03:30:00.000Z",
+        "asset": "COINx",
+        "tokenPrice": 261.5,
+        "estimatedFairValue": 253.66,
+        "fairValueGapPct": 3.09,
+        "marketRegime": "Fair-Value Gap",
+        "selectedStrategy": "Fair-Value Convergence",
+        "rejectedStrategies": [
+          "Momentum Follow",
+          "CounterFlow Fade",
+          "No-Trade / Risk-Off"
+        ],
+        "crowdScore": 37,
+        "regimeConfidence": 0.868,
+        "strategyConfidence": 0.79,
+        "liquidityScore": 0.794,
+        "direction": "short",
+        "entryPrice": 261.5,
+        "exitPrice": 255.8516,
+        "positionSizePct": 10.2,
+        "stopLossPct": 1.2,
+        "takeProfitPct": 2.16,
+        "pnlPct": 1.884,
+        "pnlValue": 0.1922,
+        "status": "closed",
+        "exitReason": "take_profit",
+        "holdMinutes": 240,
+        "agentRationale": "COINx: Fair-Value Gap regime with CrowdScore 37 and a 3.09% fair-value gap. Fair-Value Convergence selected — Short paper trade.",
+        "dataSourcesUsed": [
+          "tokenized price feed (sim)",
+          "underlying equity proxy",
+          "sector index / ETF",
+          "Nasdaq futures",
+          "news & sentiment feed",
+          "macro/earnings calendar"
+        ],
+        "riskState": "Normal"
+      }
+    },
+    {
+      "packet": {
+        "decisionId": "cfos_2026_0005",
+        "timestamp": "2026-06-21T03:30:00.000Z",
+        "asset": "HOODx",
+        "marketRegime": "Macro Shock",
+        "regimeConfidence": 0.665,
+        "regimeSignals": [
+          "Macro event active",
+          "Sharp futures / yields move",
+          "Broad risk repricing",
+          "Dollar (DXY) move"
+        ],
+        "selectedStrategy": "No-Trade / Risk-Off",
+        "rejectedStrategies": [
+          {
+            "strategy": "Momentum Follow",
+            "reason": "Sector / index confirmation weak"
+          },
+          {
+            "strategy": "CounterFlow Fade",
+            "reason": "Crowding not extreme (CrowdScore 52 < 65)"
+          },
+          {
+            "strategy": "Fair-Value Convergence",
+            "reason": "Fair-value gap not statistically significant"
+          }
+        ],
+        "direction": "flat",
+        "scores": {
+          "crowdScore": 52,
+          "fairValueGapPct": -1,
+          "regimeConfidence": 0.665,
+          "strategyConfidence": 0.874,
+          "liquidityScore": 0.704,
+          "riskScore": 0.489
+        },
+        "market": {
+          "tokenPrice": 93.14,
+          "estimatedFairValue": 94.08,
+          "underlyingPrice": 92.38,
+          "underlyingMarketOpen": false,
+          "spreadPct": 0.411
+        },
+        "council": [
+          {
+            "agent": "Macro",
+            "vote": {
+              "stance": "avoid",
+              "confidence": 1
+            },
+            "summary": "Macro event live (Fed Chair testimony); broad risk repricing — risk-off bias.",
+            "data": {
+              "macro_regime": "risk_off",
+              "risk_level": "high",
+              "nasdaq_futures_pct": 1.93,
+              "yields_change_bps": 11.2,
+              "dxy_pct": 1.06,
+              "macro_event": "Fed Chair testimony"
+            }
+          },
+          {
+            "agent": "News",
+            "vote": {
+              "stance": "neutral",
+              "confidence": 0.67
+            },
+            "summary": "No decisive catalyst; news is neutral or thin.",
+            "data": {
+              "sentiment": "positive",
+              "sentiment_score": 0.63,
+              "catalyst_strength": 0.45,
+              "evidence_quality": 0.7,
+              "news_intensity": 0.64
+            }
+          },
+          {
+            "agent": "Fair-Value",
+            "vote": {
+              "stance": "neutral",
+              "confidence": 0.55
+            },
+            "summary": "Token within normal range of fair value (-1.00%).",
+            "data": {
+              "estimated_fair_value": 94.08,
+              "token_price": 93.14,
+              "fair_value_gap_pct": -1,
+              "gap_status": "undervalued",
+              "underlying_market_open": false
+            }
+          },
+          {
+            "agent": "Crowd",
+            "vote": {
+              "stance": "neutral",
+              "confidence": 0.42
+            },
+            "summary": "CrowdScore 52 (Mixed) — ambiguous; no crowd edge.",
+            "data": {
+              "crowd_score": 52,
+              "crowd_state": "Mixed",
+              "recommendation": "avoid"
+            }
+          },
+          {
+            "agent": "Technical",
+            "vote": {
+              "stance": "neutral",
+              "confidence": 0.5
+            },
+            "summary": "No clean technical structure; price action unconfirmed.",
+            "data": {
+              "technical_state": "uptrend",
+              "trend_strength": 0.3,
+              "confirmation": false,
+              "price_velocity_pct": 1.82
+            }
+          },
+          {
+            "agent": "Liquidity",
+            "vote": {
+              "stance": "neutral",
+              "confidence": 0.52
+            },
+            "summary": "Liquidity tradable (score 0.704); slippage ~0.275%.",
+            "data": {
+              "liquidity_status": "tradable",
+              "liquidity_score": 0.704,
+              "slippage_estimate_pct": 0.275
+            }
+          },
+          {
+            "agent": "Risk",
+            "vote": {
+              "stance": "avoid",
+              "confidence": 0.6
+            },
+            "summary": "Elevated event risk — recommend reduced size or stand aside.",
+            "data": {
+              "risk_score": 0.489,
+              "event_risk": true,
+              "volatility_pct": 3.27
+            }
+          },
+          {
+            "agent": "Strategy Router",
+            "vote": {
+              "stance": "avoid",
+              "confidence": 0.874
+            },
+            "summary": "High-impact event risk (Fed Chair testimony); risk policy stands aside until it clears.",
+            "data": {
+              "selected_strategy": "No-Trade / Risk-Off",
+              "direction": "flat",
+              "confidence": 0.874,
+              "regime": "Macro Shock",
+              "agent_agreement": "8/8"
+            }
+          }
+        ],
+        "agentAgreement": {
+          "agree": 8,
+          "total": 8
+        },
+        "risk": {
+          "approved": false,
+          "riskState": "Risk-Off",
+          "positionSizePct": 0,
+          "stopLossPct": 0,
+          "takeProfitPct": 0,
+          "maxLossPct": 0,
+          "reasons": [
+            "No position — router selected No-Trade / Risk-Off."
+          ],
+          "blocks": []
+        },
+        "finalAction": "no_trade",
+        "rationale": "HOODx: Macro Shock regime — No paper trade taken. no qualifying edge.",
+        "debate": "Council deliberation for HOODx — detected regime: Macro Shock (confidence 67%). Agreement 8/8.\n• Macro: Macro event live (Fed Chair testimony); broad risk repricing — risk-off bias.\n• News: No decisive catalyst; news is neutral or thin.\n• Fair-Value: Token within normal range of fair value (-1.00%).\n• Crowd: CrowdScore 52 (Mixed) — ambiguous; no crowd edge.\n• Technical: No clean technical structure; price action unconfirmed.\n• Liquidity: Liquidity tradable (score 0.704); slippage ~0.275%.\n• Risk: Elevated event risk — recommend reduced size or stand aside.\n→ Risk Governor: no position taken (Risk-Off).",
+        "reasoningSource": "deterministic",
+        "dataFreshness": "Passed",
+        "dataSourcesUsed": [
+          "tokenized price feed (sim)",
+          "underlying equity proxy",
+          "sector index / ETF",
+          "Nasdaq futures",
+          "news & sentiment feed",
+          "macro/earnings calendar"
+        ]
+      },
+      "ledgerEntry": {
+        "decisionId": "cfos_2026_0005",
+        "timestamp": "2026-06-21T03:30:00.000Z",
+        "asset": "HOODx",
+        "tokenPrice": 93.14,
+        "estimatedFairValue": 94.08,
+        "fairValueGapPct": -1,
+        "marketRegime": "Macro Shock",
+        "selectedStrategy": "No-Trade / Risk-Off",
+        "rejectedStrategies": [
+          "Momentum Follow",
+          "CounterFlow Fade",
+          "Fair-Value Convergence"
+        ],
+        "crowdScore": 52,
+        "regimeConfidence": 0.665,
+        "strategyConfidence": 0.874,
+        "liquidityScore": 0.704,
+        "direction": "flat",
+        "entryPrice": null,
+        "exitPrice": null,
+        "positionSizePct": 0,
+        "stopLossPct": 0,
+        "takeProfitPct": 0,
+        "pnlPct": null,
+        "pnlValue": null,
+        "status": "no_trade",
+        "exitReason": "none",
+        "holdMinutes": null,
+        "agentRationale": "HOODx: Macro Shock regime — No paper trade taken. no qualifying edge.",
+        "dataSourcesUsed": [
+          "tokenized price feed (sim)",
+          "underlying equity proxy",
+          "sector index / ETF",
+          "Nasdaq futures",
+          "news & sentiment feed",
+          "macro/earnings calendar"
+        ],
+        "riskState": "Risk-Off"
+      }
+    }
+  ],
+  "crowdingIndex": {
+    "index": 50,
+    "state": "Moderate",
+    "extremeAssets": 0,
+    "recommendation": "Balanced conditions; standard sizing with normal strategy routing.",
+    "components": [
+      {
+        "label": "Average CrowdScore",
+        "value": 43.6,
+        "weight": 0.3
+      },
+      {
+        "label": "Extreme-crowd asset share",
+        "value": 20,
+        "weight": 0.2
+      },
+      {
+        "label": "Cross-asset move correlation",
+        "value": 100,
+        "weight": 0.15
+      },
+      {
+        "label": "Sector-confirmation weakness",
+        "value": 55.8,
+        "weight": 0.12
+      },
+      {
+        "label": "News / sentiment intensity",
+        "value": 61.8,
+        "weight": 0.12
+      },
+      {
+        "label": "Spread widening",
+        "value": 36.4,
+        "weight": 0.11
+      }
+    ],
+    "generatedAt": "2026-06-22T09:52:26.486Z"
+  },
+  "generatedAt": "2026-06-22T09:52:26.486Z",
+  "timestamp": "2026-06-21T03:30:00.000Z"
+}

@@ -1,0 +1,190 @@
+{
+  "decisionId": "cfos_2026_0002",
+  "timestamp": "2026-06-21T03:30:00.000Z",
+  "asset": "TSLAx",
+  "marketRegime": "Crowded Hype",
+  "regimeConfidence": 0.631,
+  "regimeSignals": [
+    "Extreme crowd score",
+    "Hype / social spike",
+    "Token outruns fair value",
+    "Weak sector confirmation",
+    "Weak news evidence"
+  ],
+  "selectedStrategy": "CounterFlow Fade",
+  "rejectedStrategies": [
+    {
+      "strategy": "Momentum Follow",
+      "reason": "Sector / index confirmation weak"
+    },
+    {
+      "strategy": "Fair-Value Convergence",
+      "reason": "News may explain the gap"
+    },
+    {
+      "strategy": "No-Trade / Risk-Off",
+      "reason": "Confidence above execution threshold; an edge is present."
+    }
+  ],
+  "direction": "short",
+  "scores": {
+    "crowdScore": 73,
+    "fairValueGapPct": 3.7,
+    "regimeConfidence": 0.631,
+    "strategyConfidence": 0.828,
+    "liquidityScore": 0.736,
+    "riskScore": 0.393
+  },
+  "market": {
+    "tokenPrice": 354.42,
+    "estimatedFairValue": 341.78,
+    "underlyingPrice": 342.51,
+    "underlyingMarketOpen": false,
+    "spreadPct": 0.35
+  },
+  "council": [
+    {
+      "agent": "Macro",
+      "vote": {
+        "stance": "neutral",
+        "confidence": 0.44
+      },
+      "summary": "Mixed macro backdrop, no decisive risk signal.",
+      "data": {
+        "macro_regime": "neutral",
+        "risk_level": "high",
+        "nasdaq_futures_pct": -0.24,
+        "yields_change_bps": 0.6,
+        "dxy_pct": -0.16,
+        "macro_event": "none"
+      }
+    },
+    {
+      "agent": "News",
+      "vote": {
+        "stance": "fade",
+        "confidence": 0.8
+      },
+      "summary": "High news intensity but weak evidence quality — looks like a hype catalyst.",
+      "data": {
+        "sentiment": "positive",
+        "sentiment_score": 0.69,
+        "catalyst_strength": 0.33,
+        "evidence_quality": 0.37,
+        "news_intensity": 0.89
+      }
+    },
+    {
+      "agent": "Fair-Value",
+      "vote": {
+        "stance": "converge",
+        "confidence": 1
+      },
+      "summary": "Token overvalued by 3.70% vs estimated fair value; unexplained tracking error.",
+      "data": {
+        "estimated_fair_value": 341.78,
+        "token_price": 354.42,
+        "fair_value_gap_pct": 3.7,
+        "gap_status": "overvalued",
+        "underlying_market_open": false
+      }
+    },
+    {
+      "agent": "Crowd",
+      "vote": {
+        "stance": "fade",
+        "confidence": 0.63
+      },
+      "summary": "CrowdScore 73 (Crowded) — overreaction risk, prefer to fade.",
+      "data": {
+        "crowd_score": 73,
+        "crowd_state": "Crowded",
+        "recommendation": "fade"
+      }
+    },
+    {
+      "agent": "Technical",
+      "vote": {
+        "stance": "fade",
+        "confidence": 0.63
+      },
+      "summary": "Move is technically overextended into crowded conditions — reversal risk.",
+      "data": {
+        "technical_state": "uptrend",
+        "trend_strength": 0.55,
+        "confirmation": false,
+        "price_velocity_pct": 3.55
+      }
+    },
+    {
+      "agent": "Liquidity",
+      "vote": {
+        "stance": "neutral",
+        "confidence": 0.51
+      },
+      "summary": "Liquidity tradable (score 0.736); slippage ~0.256%.",
+      "data": {
+        "liquidity_status": "tradable",
+        "liquidity_score": 0.736,
+        "slippage_estimate_pct": 0.256
+      }
+    },
+    {
+      "agent": "Risk",
+      "vote": {
+        "stance": "neutral",
+        "confidence": 0.56
+      },
+      "summary": "Risk score 0.393 normal.",
+      "data": {
+        "risk_score": 0.393,
+        "event_risk": false,
+        "volatility_pct": 4.05
+      }
+    },
+    {
+      "agent": "Strategy Router",
+      "vote": {
+        "stance": "fade",
+        "confidence": 0.828
+      },
+      "summary": "CounterFlow Fade fits the Crowded Hype regime with the strongest setup score (0.811).",
+      "data": {
+        "selected_strategy": "CounterFlow Fade",
+        "direction": "short",
+        "confidence": 0.828,
+        "regime": "Crowded Hype",
+        "agent_agreement": "8/8"
+      }
+    }
+  ],
+  "agentAgreement": {
+    "agree": 8,
+    "total": 8
+  },
+  "risk": {
+    "approved": true,
+    "riskState": "Normal",
+    "positionSizePct": 9.7,
+    "stopLossPct": 1.2,
+    "takeProfitPct": 2.4,
+    "maxLossPct": 1.2,
+    "reasons": [
+      "Approved: size 9.7% of portfolio, stop 1.2%, take-profit 2.4% (Normal)."
+    ],
+    "blocks": []
+  },
+  "finalAction": "short_paper",
+  "rationale": "TSLAx: Crowded Hype regime with CrowdScore 73 and a 3.70% fair-value gap. CounterFlow Fade selected — Short paper trade.",
+  "debate": "Council deliberation for TSLAx — detected regime: Crowded Hype (confidence 63%). Agreement 8/8.\n• Macro: Mixed macro backdrop, no decisive risk signal.\n• News: High news intensity but weak evidence quality — looks like a hype catalyst.\n• Fair-Value: Token overvalued by 3.70% vs estimated fair value; unexplained tracking error.\n• Crowd: CrowdScore 73 (Crowded) — overreaction risk, prefer to fade.\n• Technical: Move is technically overextended into crowded conditions — reversal risk.\n• Liquidity: Liquidity tradable (score 0.736); slippage ~0.256%.\n• Risk: Risk score 0.393 normal.\n→ Risk Governor approved at 9.7% size (stop 1.2%, take-profit 2.4%, Normal).",
+  "reasoningSource": "deterministic",
+  "dataFreshness": "Passed",
+  "dataSourcesUsed": [
+    "tokenized price feed (sim)",
+    "underlying equity proxy",
+    "sector index / ETF",
+    "Nasdaq futures",
+    "news & sentiment feed",
+    "macro/earnings calendar"
+  ]
+}

@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -39,3 +40,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# playwright / test artifacts
+.playwright-mcp/
+/*.png
+
+# Note: data/ledger.jsonl IS committed — it is the reproducible paper-trading
+# proof-of-run artifact for the hackathon submission (PRD §22).
