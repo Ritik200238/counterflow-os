@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { LedgerEntry, LedgerStats, StrategyMemory } from "@/lib/types";
 import { ASSET_SYMBOLS, STRATEGIES } from "@/lib/types";
 import { Panel, SectionTitle, Badge, Bar, Stat, Spinner } from "@/components/ui";
+import EquityChart from "@/components/EquityChart";
 import {
   pctStr,
   regimeColor,
@@ -81,6 +82,21 @@ export default function LedgerView() {
   }
 
   const stats = data?.stats;
+
+  // Cumulative paper-PnL equity curve from closed trades, in chronological order.
+  const equitySeries: number[] = (() => {
+    const closed = (data?.entries ?? [])
+      .filter((e) => e.status === "closed" && e.pnlValue !== null)
+      .sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+    let cum = 0;
+    const pts = [0];
+    for (const e of closed) {
+      cum += e.pnlValue as number;
+      pts.push(Number(cum.toFixed(4)));
+    }
+    return pts;
+  })();
+
   const exportQuery = new URLSearchParams();
   if (asset) exportQuery.set("asset", asset);
   if (strategy) exportQuery.set("strategy", strategy);
@@ -139,6 +155,15 @@ export default function LedgerView() {
           <Stat label="Max drawdown" value={`${stats.maxDrawdownPct.toFixed(2)}%`} />
         </div>
       )}
+
+      {/* Equity curve */}
+      <Panel>
+        <SectionTitle
+          title="Equity Curve"
+          hint="Cumulative paper PnL across closed trades (portfolio %)"
+        />
+        {data ? <EquityChart series={equitySeries} /> : <Spinner />}
+      </Panel>
 
       {/* Strategy performance memory */}
       <Panel>

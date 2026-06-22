@@ -1,0 +1,25 @@
+
+════ COUNTERFLOW OS — LEDGER REPORT ══════════════════════════════
+Decisions: 160
+Executed paper trades: 111  (closed 111, open 0)
+No-Trade decisions: 49
+Win rate: 57.7%  (64W / 47L)
+Avg return / trade: +0.21%
+Total PnL (portfolio %): +2.38%
+Max drawdown: 1.32%
+
+════ STRATEGY PERFORMANCE MEMORY ═════════════════════════════════
+Strategy                Trades  WinRate  AvgRet  BestRegime      WorstRegime     Weight
+----------------------  ------  -------  ------  --------------  --------------  ------
+CounterFlow Fade        40      57%      +0.04%  Crowded Hype    Crowded Hype    26%   
+Momentum Follow         30      57%      +0.42%  Clean Trend     Clean Trend     30%   
+Fair-Value Convergence  41      59%      +0.21%  Fair-Value Gap  Fair-Value Gap  29%   
+No-Trade / Risk-Off     42      —        —       —               —               15%   
+
+════ BY REGIME ═══════════════════════════════════════════════════
+Regime          Trades  WinRate  AvgRet
+--------------  ------  -------  ------
+Clean Trend     30      57%      +0.42%
+Crowded Hype    40      57%      +0.04%
+Fair-Value Gap  41      59%      +0.21%
+
