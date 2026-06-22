@@ -64,6 +64,7 @@ npm run scan -- --persist   # also resolve + append these decisions to the ledge
 npm run seed          # write data/ledger.jsonl from a deterministic backtest
 npm run seed -- 300 myseed  # custom decision count + seed
 npm run report        # performance report from the on-disk ledger
+npm test              # engine invariant suite (reproducibility, scores, regimes, risk)
 ```
 
 ---
@@ -157,6 +158,7 @@ scripts/            # CLI: scan / seed / report
 
 ### Reproducibility & honesty
 
+- **`npm test`** — 200 assertions covering reproducibility, score ranges, regime detection, router/risk invariants, and ledger accounting (all green).
 - **Seeded RNG everywhere** — same seed ⇒ same market ⇒ same decisions ⇒ same ledger.
 - **Honest edge model** — backtested win rates land in a believable ~55–60% range with real
   cost/slippage drag; nothing is tuned to look perfect (PRD §6: no cherry-picking, no fake precision).

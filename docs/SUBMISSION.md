@@ -65,6 +65,7 @@ on the roadmap).
 
 ## Verified build evidence
 
+- `npm test` → **200 assertions pass** (reproducibility, score ranges, regime detection, router/risk invariants, ledger accounting)
 - `npm run lint` → 0 problems · `npx tsc --noEmit` → clean · `npm run build` → all routes compile
 - Backtest (160 decisions, seed `counterflow-backtest`): **57.7% win, +2.38% total PnL,
   1.32% max drawdown, 49 disciplined no-trades.** All three active strategies net-positive.
