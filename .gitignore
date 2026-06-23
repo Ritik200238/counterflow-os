@@ -49,3 +49,4 @@ next-env.d.ts
 # proof-of-run artifact for the hackathon submission (PRD §22).
 
 .vercel
+.env*

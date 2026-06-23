@@ -20,19 +20,20 @@ function Nav() {
           <span className="text-cyan-400 text-lg leading-none">◢</span>
           <span className="font-semibold tracking-tight">CounterFlow OS</span>
         </Link>
-        <nav className="flex items-center gap-1 text-sm text-muted">
-          <Link href="/" className="rounded-md px-3 py-1.5 hover:bg-white/5 hover:text-white">
-            Dashboard
-          </Link>
-          <Link href="/agent" className="rounded-md px-3 py-1.5 hover:bg-white/5 hover:text-white">
-            Agent
-          </Link>
-          <Link href="/ask" className="rounded-md px-3 py-1.5 hover:bg-white/5 hover:text-white">
-            Ask Agent
-          </Link>
-          <Link href="/ledger" className="rounded-md px-3 py-1.5 hover:bg-white/5 hover:text-white">
-            Trade Ledger
-          </Link>
+        <nav className="flex flex-wrap items-center gap-0.5 text-sm text-muted">
+          {[
+            ["/", "Dashboard"],
+            ["/agent", "Agent"],
+            ["/ask", "Ask"],
+            ["/signals", "Signals"],
+            ["/autopilot", "Autopilot"],
+            ["/shadow", "Shadow"],
+            ["/ledger", "Ledger"],
+          ].map(([href, label]) => (
+            <Link key={href} href={href} className="rounded-md px-2.5 py-1.5 hover:bg-white/5 hover:text-white">
+              {label}
+            </Link>
+          ))}
         </nav>
         <div className="ml-auto flex items-center gap-2 text-xs">
           <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-1 font-medium text-amber-300">

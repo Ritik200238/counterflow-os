@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { BoardResult, ScanOutcome } from "@/lib/pipeline";
 import { Panel, SectionTitle, Badge, Bar, Stat, KeyVal, Spinner } from "@/components/ui";
+import StreamingCouncil from "@/components/StreamingCouncil";
 import {
   actionColor,
   actionLabel,
@@ -174,6 +175,9 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
             </Badge>
           }
         />
+        <div className="mb-3">
+          <StreamingCouncil symbol={symbol} source={source} />
+        </div>
         <div className="grid gap-3 sm:grid-cols-2">
           {p.council.map((a, i) => (
             <div

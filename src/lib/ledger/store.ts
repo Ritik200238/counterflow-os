@@ -1,44 +1,32 @@
 import fs from "node:fs";
 import fsp from "node:fs/promises";
-import os from "node:os";
 import path from "node:path";
 import type { LedgerEntry } from "@/lib/types";
 
-// Append-only JSONL ledger. One decision per line. JSONL is chosen deliberately:
-// it is human-inspectable, diff-friendly, trivially exportable, and proves the
-// system actually ran (PRD §15).
+// Append-only JSONL ledger. JSONL is chosen deliberately: human-inspectable,
+// diff-friendly, exportable, and proof the system ran (PRD §15).
 //
-// Storage location is environment-aware:
-//   • Local/dev: <project>/data/ledger.jsonl (committed, the canonical demo ledger)
-//   • Serverless (Vercel): the project filesystem is read-only, so writes go to
-//     os.tmpdir(); the first write seeds itself from the committed ledger so the
-//     live demo keeps its history. Reads prefer the writable copy, else the
-//     committed bundle.
+// Storage is environment-aware:
+//   • Local/dev: <project>/data/ledger.jsonl (committed canonical demo ledger).
+//   • Vercel (read-only FS): durable Vercel Blob, so writes survive cold starts
+//     and the cron / scan-logging actually accumulate. First read falls back to
+//     the committed bundle until the first write seeds the blob.
+// All Blob calls are wrapped so a failure degrades to the bundled ledger rather
+// than breaking the app.
 
-const ON_SERVERLESS = Boolean(process.env.VERCEL);
+const BLOB_KEY = "ledger.jsonl";
+const useBlob = Boolean(process.env.VERCEL && process.env.BLOB_READ_WRITE_TOKEN);
 
-/** The committed, read-only ledger shipped with the deployment. */
 function bundledLedgerPath(): string {
   return path.join(process.cwd(), "data", "ledger.jsonl");
 }
 
 export function dataDir(): string {
-  return ON_SERVERLESS ? path.join(os.tmpdir(), "counterflow") : path.join(process.cwd(), "data");
+  return path.join(process.cwd(), "data");
 }
 
-/** Where writes go (and the preferred read source once it exists). */
 export function ledgerPath(): string {
-  return path.join(dataDir(), "ledger.jsonl");
-}
-
-async function ensureDataDir(): Promise<void> {
-  await fsp.mkdir(dataDir(), { recursive: true });
-}
-
-/** The path to read from: the writable copy if present, else the bundled ledger. */
-function readPath(): string {
-  const w = ledgerPath();
-  return fs.existsSync(w) ? w : bundledLedgerPath();
+  return useBlob ? `blob:${BLOB_KEY}` : path.join(dataDir(), "ledger.jsonl");
 }
 
 function parseJsonl(text: string): LedgerEntry[] {
@@ -49,57 +37,100 @@ function parseJsonl(text: string): LedgerEntry[] {
     try {
       out.push(JSON.parse(trimmed) as LedgerEntry);
     } catch {
-      // Skip a corrupt line rather than failing the whole read.
+      /* skip corrupt line */
     }
   }
   return out;
 }
 
-export async function readLedger(): Promise<LedgerEntry[]> {
+function serialize(entries: LedgerEntry[]): string {
+  return entries.map((e) => JSON.stringify(e)).join("\n") + (entries.length ? "\n" : "");
+}
+
+function readBundled(): LedgerEntry[] {
   try {
-    return parseJsonl(await fsp.readFile(readPath(), "utf8"));
+    return parseJsonl(fs.readFileSync(bundledLedgerPath(), "utf8"));
+  } catch {
+    return [];
+  }
+}
+
+// --- Blob-backed (Vercel) ------------------------------------------------
+
+async function blobRead(): Promise<LedgerEntry[]> {
+  try {
+    const { head } = await import("@vercel/blob");
+    const meta = await head(BLOB_KEY, { token: process.env.BLOB_READ_WRITE_TOKEN });
+    const res = await fetch(meta.downloadUrl, { cache: "no-store" });
+    if (!res.ok) throw new Error(`blob fetch ${res.status}`);
+    return parseJsonl(await res.text());
+  } catch {
+    // Not yet written (or transient) → fall back to the committed bundle.
+    return readBundled();
+  }
+}
+
+async function blobWrite(entries: LedgerEntry[]): Promise<void> {
+  const { put } = await import("@vercel/blob");
+  await put(BLOB_KEY, serialize(entries), {
+    access: "public", // non-sensitive paper-sim data in a public store
+    token: process.env.BLOB_READ_WRITE_TOKEN,
+    addRandomSuffix: false,
+    allowOverwrite: true,
+    contentType: "application/x-ndjson",
+  });
+}
+
+// --- Public API ----------------------------------------------------------
+
+async function ensureDataDir(): Promise<void> {
+  await fsp.mkdir(dataDir(), { recursive: true });
+}
+
+export async function readLedger(): Promise<LedgerEntry[]> {
+  if (useBlob) return blobRead();
+  try {
+    return parseJsonl(await fsp.readFile(path.join(dataDir(), "ledger.jsonl"), "utf8"));
   } catch (err) {
-    if ((err as NodeJS.ErrnoException).code === "ENOENT") return [];
+    if ((err as NodeJS.ErrnoException).code === "ENOENT") return readBundled();
     throw err;
   }
 }
 
 export function readLedgerSync(): LedgerEntry[] {
+  // Synchronous read is local-only (Blob is async); used by non-server callers.
   try {
-    return parseJsonl(fs.readFileSync(readPath(), "utf8"));
-  } catch (err) {
-    if ((err as NodeJS.ErrnoException).code === "ENOENT") return [];
-    throw err;
-  }
-}
-
-/** On serverless, seed the writable copy from the committed ledger on first write
- *  so appended decisions extend the demo history rather than replacing it. */
-async function seedWritableIfNeeded(): Promise<void> {
-  if (!ON_SERVERLESS) return;
-  const w = ledgerPath();
-  if (fs.existsSync(w)) return;
-  const bundled = bundledLedgerPath();
-  if (fs.existsSync(bundled)) {
-    await fsp.copyFile(bundled, w);
+    return parseJsonl(fs.readFileSync(path.join(dataDir(), "ledger.jsonl"), "utf8"));
+  } catch {
+    return readBundled();
   }
 }
 
 export async function appendLedger(entries: LedgerEntry[]): Promise<void> {
   if (entries.length === 0) return;
+  if (useBlob) {
+    const current = await blobRead();
+    await blobWrite([...current, ...entries]);
+    return;
+  }
   await ensureDataDir();
-  await seedWritableIfNeeded();
-  const payload = entries.map((e) => JSON.stringify(e)).join("\n") + "\n";
-  await fsp.appendFile(ledgerPath(), payload, "utf8");
+  await fsp.appendFile(path.join(dataDir(), "ledger.jsonl"), serialize(entries), "utf8");
 }
 
 export async function writeLedger(entries: LedgerEntry[]): Promise<void> {
+  if (useBlob) {
+    await blobWrite(entries);
+    return;
+  }
   await ensureDataDir();
-  const payload = entries.map((e) => JSON.stringify(e)).join("\n") + (entries.length ? "\n" : "");
-  await fsp.writeFile(ledgerPath(), payload, "utf8");
+  await fsp.writeFile(path.join(dataDir(), "ledger.jsonl"), serialize(entries), "utf8");
 }
 
 export async function clearLedger(): Promise<void> {
+  if (useBlob) {
+    await blobWrite([]);
+    return;
+  }
   await ensureDataDir();
-  await fsp.writeFile(ledgerPath(), "", "utf8");
+  await fsp.writeFile(path.join(dataDir(), "ledger.jsonl"), "", "utf8");
 }
