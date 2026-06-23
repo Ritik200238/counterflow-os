@@ -61,7 +61,9 @@ async function blobRead(): Promise<LedgerEntry[]> {
   try {
     const { head } = await import("@vercel/blob");
     const meta = await head(BLOB_KEY, { token: process.env.BLOB_READ_WRITE_TOKEN });
-    const res = await fetch(meta.downloadUrl, { cache: "no-store" });
+    const u = new URL(meta.downloadUrl);
+    u.searchParams.set("_cf", String(Date.now())); // bust any stale edge cache
+    const res = await fetch(u.toString(), { cache: "no-store" });
     if (!res.ok) throw new Error(`blob fetch ${res.status}`);
     return parseJsonl(await res.text());
   } catch {
@@ -78,6 +80,7 @@ async function blobWrite(entries: LedgerEntry[]): Promise<void> {
     addRandomSuffix: false,
     allowOverwrite: true,
     contentType: "application/x-ndjson",
+    cacheControlMaxAge: 0, // mutable file — don't let the CDN serve stale reads
   });
 }
 
