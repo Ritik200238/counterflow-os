@@ -10,9 +10,10 @@ import { runCouncil } from "@/lib/council";
 import { routeStrategy } from "@/lib/router";
 import { riskGovernor, RISK_LIMITS } from "@/lib/governor";
 import { generateReasoning } from "@/lib/llm/reasoning";
-import { noTradeResult, resolveTrade, type ExecutionPlan } from "@/lib/executor";
+import { noTradeResult, openResult, resolveTrade, type ExecutionPlan } from "@/lib/executor";
 import { computeCrowdingIndex } from "@/lib/crowding";
 import { generateBoard } from "@/lib/market/generator";
+import { getLiveBoard } from "@/lib/market/live";
 import { round } from "@/lib/util/num";
 
 // The scan pipeline: one snapshot in, one auditable Trade Decision Packet out
@@ -64,17 +65,22 @@ export async function scanAsset(
   const s = sig.snapshot;
   let execution = noTradeResult();
   if (finalAction !== "no_trade") {
-    const costPct = round(s.spreadPct + sig.liquidity.slippageEstimatePct + 0.02, 3);
-    const plan: ExecutionPlan = {
-      direction: router.direction,
-      entryPrice: s.tokenPrice,
-      entryTime: s.timestamp,
-      stopLossPct: risk.stopLossPct,
-      takeProfitPct: risk.takeProfitPct,
-      positionSizePct: risk.positionSizePct,
-      costPct,
-    };
-    execution = resolveTrade(plan, market.forwardPath);
+    if (market.forwardPath.length === 0) {
+      // Live data: open the position; it cannot be resolved against a known future.
+      execution = openResult();
+    } else {
+      const costPct = round(s.spreadPct + sig.liquidity.slippageEstimatePct + 0.02, 3);
+      const plan: ExecutionPlan = {
+        direction: router.direction,
+        entryPrice: s.tokenPrice,
+        entryTime: s.timestamp,
+        stopLossPct: risk.stopLossPct,
+        takeProfitPct: risk.takeProfitPct,
+        positionSizePct: risk.positionSizePct,
+        costPct,
+      };
+      execution = resolveTrade(plan, market.forwardPath);
+    }
   }
 
   const dataFreshness =
@@ -175,6 +181,8 @@ export interface BoardResult {
   crowdingIndex: CrowdingIndex;
   generatedAt: string;
   timestamp: string;
+  source: "live" | "sim";
+  sourceNote?: string;
 }
 
 export async function scanBoard(opts?: {
@@ -182,8 +190,26 @@ export async function scanBoard(opts?: {
   startSeq?: number;
   seed?: string;
   timestamp?: string;
+  source?: "live" | "sim";
+  nowMs?: number;
 }): Promise<BoardResult> {
-  const board = generateBoard(opts?.seed, opts?.timestamp);
+  let source: "live" | "sim" = opts?.source ?? "sim";
+  let sourceNote: string | undefined;
+  let board: AssetMarketData[];
+
+  if (source === "live") {
+    try {
+      board = await getLiveBoard(opts?.nowMs ?? Date.now());
+    } catch (err) {
+      // Never break the board — fall back to the reproducible simulation.
+      board = generateBoard(opts?.seed, opts?.timestamp);
+      source = "sim";
+      sourceNote = `Live feed unavailable (${(err as Error).message}); showing seeded demo.`;
+    }
+  } else {
+    board = generateBoard(opts?.seed, opts?.timestamp);
+  }
+
   const startSeq = opts?.startSeq ?? 1;
   const year = new Date(board[0].snapshot.timestamp).getUTCFullYear();
 
@@ -204,5 +230,7 @@ export async function scanBoard(opts?: {
     crowdingIndex,
     generatedAt: new Date().toISOString(),
     timestamp: board[0].snapshot.timestamp,
+    source,
+    sourceNote,
   };
 }

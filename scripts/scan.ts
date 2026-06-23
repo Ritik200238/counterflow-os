@@ -13,6 +13,7 @@ async function main() {
   loadDotEnv();
   const useLLM = process.argv.includes("--llm");
   const persist = process.argv.includes("--persist");
+  const live = process.argv.includes("--live");
 
   if (useLLM) {
     console.log(
@@ -25,7 +26,15 @@ async function main() {
   }
 
   const existing = persist ? await readLedger() : [];
-  const board = await scanBoard({ useLLM, startSeq: existing.length + 1 });
+  const board = await scanBoard({
+    useLLM,
+    source: live ? "live" : "sim",
+    startSeq: existing.length + 1,
+  });
+
+  console.log(
+    `Data source: ${board.source === "live" ? "LIVE (Bitget + Yahoo)" : "seeded simulation"}${board.sourceNote ? " — " + board.sourceNote : ""}`,
+  );
 
   console.log(rule("AGENT CROWDING INDEX"));
   console.log(

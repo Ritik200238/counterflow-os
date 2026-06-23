@@ -22,12 +22,16 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
   const [decision, setDecision] = useState<ScanOutcome | null>(null);
   const [loading, setLoading] = useState(true);
   const [llm, setLlm] = useState(false);
+  const [source, setSource] = useState<"sim" | "live">("sim");
   const [error, setError] = useState<string | null>(null);
   const [showJson, setShowJson] = useState(false);
 
   useEffect(() => {
     let active = true;
-    fetch(`/api/board${llm ? "?llm=1" : ""}`)
+    const params = new URLSearchParams();
+    if (llm) params.set("llm", "1");
+    if (source === "live") params.set("source", "live");
+    fetch(`/api/board?${params}`)
       .then((r) => r.json())
       .then((d: BoardResult) => {
         if (!active) return;
@@ -43,7 +47,14 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
     return () => {
       active = false;
     };
-  }, [symbol, llm]);
+  }, [symbol, llm, source]);
+
+  function switchSource(s: "sim" | "live") {
+    if (s !== source) {
+      setLoading(true);
+      setSource(s);
+    }
+  }
 
   if (loading && !decision) return <Spinner label="Loading decision packet…" />;
   if (error) return <p className="text-rose-300">{error}</p>;
@@ -58,18 +69,34 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
         <Link href="/" className="text-sm text-muted hover:text-white">
           ← Dashboard
         </Link>
-        <label className="flex cursor-pointer items-center gap-2 text-xs text-muted">
-          <input
-            type="checkbox"
-            checked={llm}
-            onChange={(e) => {
-              setLoading(true);
-              setLlm(e.target.checked);
-            }}
-            className="accent-cyan-400"
-          />
-          AI debate (Qwen)
-        </label>
+        <div className="flex items-center gap-3">
+          <div className="flex overflow-hidden rounded-lg border hairline text-xs">
+            <button
+              onClick={() => switchSource("sim")}
+              className={`px-3 py-1 ${source === "sim" ? "bg-cyan-500/20 text-cyan-200" : "text-muted hover:bg-white/5"}`}
+            >
+              Demo
+            </button>
+            <button
+              onClick={() => switchSource("live")}
+              className={`px-3 py-1 ${source === "live" ? "bg-emerald-500/20 text-emerald-200" : "text-muted hover:bg-white/5"}`}
+            >
+              ⚡ Live
+            </button>
+          </div>
+          <label className="flex cursor-pointer items-center gap-2 text-xs text-muted">
+            <input
+              type="checkbox"
+              checked={llm}
+              onChange={(e) => {
+                setLoading(true);
+                setLlm(e.target.checked);
+              }}
+              className="accent-cyan-400"
+            />
+            AI debate (Qwen)
+          </label>
+        </div>
       </div>
 
       {/* Header */}

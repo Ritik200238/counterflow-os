@@ -10,8 +10,9 @@ export const runtime = "nodejs";
 export async function GET(req: NextRequest) {
   const useLLM = req.nextUrl.searchParams.get("llm") === "1";
   const seed = req.nextUrl.searchParams.get("seed") ?? undefined;
+  const source = req.nextUrl.searchParams.get("source") === "live" ? "live" : "sim";
   try {
-    const board = await scanBoard({ useLLM, seed });
+    const board = await scanBoard({ useLLM, seed, source });
     return Response.json(board);
   } catch (err) {
     return Response.json(

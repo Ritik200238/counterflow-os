@@ -36,6 +36,19 @@ export function noTradeResult(): ExecutionResult {
   };
 }
 
+// Live mode: a trade is opened against real-time data but cannot be resolved
+// against a known future, so it stays open with no fabricated PnL.
+export function openResult(): ExecutionResult {
+  return {
+    status: "open",
+    exitPrice: null,
+    exitReason: "none",
+    pnlPct: null,
+    pnlValue: null,
+    holdMinutes: null,
+  };
+}
+
 export function resolveTrade(
   plan: ExecutionPlan,
   forwardPath: PricePoint[],

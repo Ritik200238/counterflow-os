@@ -25,13 +25,17 @@ export default function Dashboard() {
   const [data, setData] = useState<BoardResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [llm, setLlm] = useState(false);
+  const [source, setSource] = useState<"sim" | "live">("sim");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
     // No synchronous setState here — loading starts true on mount and is set true
-    // by the toggle handler on refetch; all state updates happen post-await.
-    fetch(`/api/board${llm ? "?llm=1" : ""}`)
+    // by the toggle handlers on refetch; all state updates happen post-await.
+    const params = new URLSearchParams();
+    if (llm) params.set("llm", "1");
+    if (source === "live") params.set("source", "live");
+    fetch(`/api/board?${params}`)
       .then((r) => r.json())
       .then((d) => {
         if (!active) return;
@@ -46,7 +50,14 @@ export default function Dashboard() {
     return () => {
       active = false;
     };
-  }, [llm]);
+  }, [llm, source]);
+
+  function switchSource(s: "sim" | "live") {
+    if (s !== source) {
+      setLoading(true);
+      setSource(s);
+    }
+  }
 
   const ci = data?.crowdingIndex;
   const marketClosed =
@@ -110,18 +121,34 @@ export default function Dashboard() {
           title="Strategy Board"
           hint="One routing decision per asset — click a row for the full proof packet"
           right={
-            <label className="flex cursor-pointer items-center gap-2 text-xs text-muted">
-              <input
-                type="checkbox"
-                checked={llm}
-                onChange={(e) => {
-                  setLoading(true);
-                  setLlm(e.target.checked);
-                }}
-                className="accent-cyan-400"
-              />
-              AI reasoning (Qwen)
-            </label>
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex overflow-hidden rounded-lg border hairline text-xs">
+                <button
+                  onClick={() => switchSource("sim")}
+                  className={`px-3 py-1 ${source === "sim" ? "bg-cyan-500/20 text-cyan-200" : "text-muted hover:bg-white/5"}`}
+                >
+                  Demo
+                </button>
+                <button
+                  onClick={() => switchSource("live")}
+                  className={`px-3 py-1 ${source === "live" ? "bg-emerald-500/20 text-emerald-200" : "text-muted hover:bg-white/5"}`}
+                >
+                  ⚡ Live
+                </button>
+              </div>
+              <label className="flex cursor-pointer items-center gap-2 text-xs text-muted">
+                <input
+                  type="checkbox"
+                  checked={llm}
+                  onChange={(e) => {
+                    setLoading(true);
+                    setLlm(e.target.checked);
+                  }}
+                  className="accent-cyan-400"
+                />
+                AI reasoning (Qwen)
+              </label>
+            </div>
           }
         />
 
@@ -132,7 +159,15 @@ export default function Dashboard() {
         )}
 
         {loading && !data ? (
-          <Spinner label={llm ? "Running council with Qwen…" : "Scanning market…"} />
+          <Spinner
+            label={
+              source === "live"
+                ? "Fetching live Bitget + Yahoo data…"
+                : llm
+                  ? "Running council with Qwen…"
+                  : "Scanning market…"
+            }
+          />
         ) : data ? (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -185,15 +220,32 @@ export default function Dashboard() {
                 ))}
               </tbody>
             </table>
+            {data.source === "live" &&
+              data.decisions.every((d) => d.packet.finalAction === "no_trade") && (
+                <p className="mt-3 rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-2.5 text-xs text-emerald-200/90">
+                  Live tracking errors are small right now, so the system stands aside —
+                  disciplined No-Trade. Switch to <strong>Demo</strong> to see active routing
+                  across all six regimes.
+                </p>
+              )}
             <p className="mt-3 text-xs text-muted">
-              Reasoning source:{" "}
+              Data:{" "}
+              <span className="mono">
+                {data.source === "live"
+                  ? "LIVE — Bitget tokenized prices + Yahoo underlying (real tracking error)"
+                  : "Demo scenario (seeded, reproducible)"}
+              </span>{" "}
+              · Reasoning:{" "}
               <span className="mono">
                 {data.decisions[0]?.packet.reasoningSource === "qwen"
                   ? `Qwen (${data.decisions[0]?.packet.reasoningModel})`
                   : "deterministic narrator"}
               </span>{" "}
-              · scan time {new Date(data.timestamp).toUTCString()}
+              · {new Date(data.timestamp).toUTCString()}
             </p>
+            {data.sourceNote && (
+              <p className="mt-1 text-xs text-amber-300/80">{data.sourceNote}</p>
+            )}
           </div>
         ) : null}
       </Panel>

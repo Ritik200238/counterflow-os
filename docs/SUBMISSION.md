@@ -43,7 +43,9 @@ without a browser. Lint, typecheck, and production build are all green.
 **Completeness.** End-to-end: market sensing → 5 scores → regime detection → multi-agent council →
 strategy routing with rejected-reason trail → risk governor → paper execution → JSONL ledger →
 strategy performance memory + autopilot → Agent Crowding Index → dashboard + REST API + CLI. Every
-MVP "must/should" item in the PRD is implemented.
+MVP "must/should" item in the PRD is implemented. **Live mode uses real data** — real tokenized-stock
+prices from Bitget (the actual `R*USDT` markets) and real underlying equity prices from Yahoo, so the
+fair-value gaps are genuine tracking errors, not a simulation.
 
 **Novelty & potential.** Not a generic signal bot — a new category: an **Agentic Strategy Router**
 with a **proof layer**. The Trade Decision Packet (every decision explainable, auditable,
