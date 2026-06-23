@@ -7,6 +7,8 @@ Win rate: 57.7%  (64W / 47L)
 Avg return / trade: +0.21%
 Total PnL (portfolio %): +2.38%
 Max drawdown: 1.32%
+Sharpe (per trade): 0.134  |  Sortino: 0.207  |  Profit factor: 1.34
+Best trade: +2.83%  |  Worst trade: -2.15%
 
 ════ STRATEGY PERFORMANCE MEMORY ═════════════════════════════════
 Strategy                Trades  WinRate  AvgRet  BestRegime      WorstRegime     Weight

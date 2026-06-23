@@ -358,6 +358,12 @@ export interface LedgerStats {
   avgReturnPct: number | null;
   totalPnlValue: number; // sum of portfolio contributions
   maxDrawdownPct: number;
+  // Risk-adjusted metrics over per-trade returns (PRD §23; Vibe-Trading-style rigor)
+  sharpe: number | null; // per-trade Sharpe = mean / stdev
+  sortino: number | null; // per-trade Sortino = mean / downside deviation
+  profitFactor: number | null; // gross wins / gross losses
+  bestTradePct: number | null;
+  worstTradePct: number | null;
   byStrategy: StrategyMemoryRow[];
   byRegime: { regime: Regime; trades: number; winRate: number | null; avgReturnPct: number | null }[];
 }

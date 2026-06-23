@@ -156,6 +156,25 @@ export default function LedgerView() {
         </div>
       )}
 
+      {/* Risk-adjusted metrics */}
+      {stats && stats.closedTrades > 0 && (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          <Stat label="Sharpe (per trade)" value={stats.sharpe ?? "—"} />
+          <Stat label="Sortino" value={stats.sortino ?? "—"} />
+          <Stat label="Profit factor" value={stats.profitFactor ?? "—"} />
+          <Stat
+            label="Best trade"
+            value={pctStr(stats.bestTradePct)}
+            valueClass="text-emerald-300"
+          />
+          <Stat
+            label="Worst trade"
+            value={pctStr(stats.worstTradePct)}
+            valueClass="text-rose-300"
+          />
+        </div>
+      )}
+
       {/* Equity curve */}
       <Panel>
         <SectionTitle

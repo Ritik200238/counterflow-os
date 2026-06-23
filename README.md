@@ -97,6 +97,12 @@ npm test              # engine invariant suite (reproducibility, scores, regimes
 
 ## What's inside
 
+### Ask CounterFlow — natural-language agent
+Ask in plain English ("Why is the system standing aside?", "Which token is most mispriced?",
+"Is NVDAx a buy?") and get an answer **grounded in the real engine output** — regimes, strategies,
+and scores from the live decision pipeline. Qwen phrases the answer; a deterministic fallback
+produces an equally-grounded reply with no LLM. **Numbers are never invented.** → `/ask`
+
 ### Universe (PRD §9)
 `NVDAx · TSLAx · AAPLx · COINx · HOODx` — tokenized US equities chosen for distinct behaviors
 (AI momentum, retail crowding, large-cap benchmark, crypto-equity bridge, fintech reflexivity).
@@ -145,7 +151,8 @@ All routes are Next.js Route Handlers (Node runtime).
 
 | Method & Route | Description |
 | --- | --- |
-| `GET /api/board?llm=1` | Live strategy board (5 packets) + Agent Crowding Index. `llm=1` enables Qwen reasoning. |
+| `POST /api/ask` | Natural-language agent. `{ question, source?: "live"\|"sim" }` → engine-grounded answer. |
+| `GET /api/board?llm=1&source=live` | Strategy board (5 packets) + Agent Crowding Index. `llm=1` enables Qwen; `source=live` uses real Bitget+Yahoo data. |
 | `POST /api/scan` | LLM-enriched live scan, resolve paper trades, append to ledger. |
 | `GET /api/ledger?asset=&strategy=&format=csv` | Ledger entries + stats; CSV/JSON export. |
 | `GET /api/strategy-memory` | Strategy Performance Memory + autopilot weights. |

@@ -26,6 +26,10 @@ async function main() {
   console.log(`Avg return / trade: ${pctStr(stats.avgReturnPct)}`);
   console.log(`Total PnL (portfolio %): ${pctStr(stats.totalPnlValue)}`);
   console.log(`Max drawdown: ${stats.maxDrawdownPct.toFixed(2)}%`);
+  console.log(
+    `Sharpe (per trade): ${stats.sharpe ?? "—"}  |  Sortino: ${stats.sortino ?? "—"}  |  Profit factor: ${stats.profitFactor ?? "—"}`,
+  );
+  console.log(`Best trade: ${pctStr(stats.bestTradePct)}  |  Worst trade: ${pctStr(stats.worstTradePct)}`);
 
   console.log(rule("STRATEGY PERFORMANCE MEMORY"));
   console.log(

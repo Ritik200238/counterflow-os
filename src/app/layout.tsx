@@ -24,6 +24,9 @@ function Nav() {
           <Link href="/" className="rounded-md px-3 py-1.5 hover:bg-white/5 hover:text-white">
             Dashboard
           </Link>
+          <Link href="/ask" className="rounded-md px-3 py-1.5 hover:bg-white/5 hover:text-white">
+            Ask Agent
+          </Link>
           <Link href="/ledger" className="rounded-md px-3 py-1.5 hover:bg-white/5 hover:text-white">
             Trade Ledger
           </Link>

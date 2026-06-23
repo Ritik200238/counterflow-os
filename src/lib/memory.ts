@@ -151,6 +151,28 @@ export function computeLedgerStats(entries: LedgerEntry[]): LedgerStats {
     4,
   );
 
+  // Risk-adjusted metrics over per-trade returns.
+  const returns = closed.map((e) => e.pnlPct as number);
+  let sharpe: number | null = null;
+  let sortino: number | null = null;
+  let profitFactor: number | null = null;
+  let bestTradePct: number | null = null;
+  let worstTradePct: number | null = null;
+  if (returns.length > 0) {
+    const m = returns.reduce((a, b) => a + b, 0) / returns.length;
+    const sd = Math.sqrt(returns.reduce((a, b) => a + (b - m) ** 2, 0) / returns.length);
+    const downside = Math.sqrt(
+      returns.reduce((a, b) => a + (b < 0 ? b * b : 0), 0) / returns.length,
+    );
+    const grossWin = returns.filter((r) => r > 0).reduce((a, b) => a + b, 0);
+    const grossLoss = Math.abs(returns.filter((r) => r < 0).reduce((a, b) => a + b, 0));
+    sharpe = sd > 0 ? round(m / sd, 3) : null;
+    sortino = downside > 0 ? round(m / downside, 3) : null;
+    profitFactor = grossLoss > 0 ? round(grossWin / grossLoss, 2) : null;
+    bestTradePct = round(Math.max(...returns), 3);
+    worstTradePct = round(Math.min(...returns), 3);
+  }
+
   const byStrategy = computeStrategyMemory(entries).rows;
 
   const byRegime = REGIMES.map((regime) => {
@@ -178,6 +200,11 @@ export function computeLedgerStats(entries: LedgerEntry[]): LedgerStats {
     avgReturnPct,
     totalPnlValue,
     maxDrawdownPct: maxDrawdownPct(closed),
+    sharpe,
+    sortino,
+    profitFactor,
+    bestTradePct,
+    worstTradePct,
     byStrategy,
     byRegime,
   };
