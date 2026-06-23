@@ -110,6 +110,31 @@ Ask in plain English ("Why is the system standing aside?", "Which token is most 
 and scores from the live decision pipeline. Qwen phrases the answer; a deterministic fallback
 produces an equally-grounded reply with no LLM. **Numbers are never invented.** → `/ask`
 
+### Strategy Autopilot (PRD §35)
+`/autopilot` reallocates paper capital across strategies from trailing performance — leaning into
+what's working in the recent regime mix, with a cash floor — and shows the **allocation rotating
+over time** plus a rotation log.
+
+### Signal Zoo (benchmarked factor library)
+`/signals` — our adaptation of Vibe-Trading's Alpha Zoo. Instead of importing hundreds of formulas,
+it catalogs the named signals the engine uses and **benchmarks each with a real information
+coefficient** (correlation of signal vs realized forward return) over an instrumented backtest. The
+ICs validate the thesis: crowding, hype, and fair-value gap all carry *negative* IC — they mean-revert.
+
+### Decision Shadow (diagnostics + counterfactuals)
+`/shadow` — our adaptation of Vibe-Trading's Shadow Account. Behavioral diagnostics on the agent's
+own ledger (no-trade discipline, exit mix, edge-by-confidence) plus **naive-baseline counterfactuals**
+(always-momentum / buy&hold / random) on the identical market. Routing-by-regime beats all baselines
+while trading less.
+
+### Live council stream
+On the asset page, "Watch the council deliberate" opens an **SSE stream** (`/api/council/stream`) of
+the 8 agents voting in real time, ending with the router verdict.
+
+### Durable, autonomous in production
+The ledger persists to **Vercel Blob** in production (filesystem locally), so writes survive cold
+starts. A **Vercel cron** runs the agent headless on a schedule (`/api/agent/tick`).
+
 ### Universe (PRD §9)
 `NVDAx · TSLAx · AAPLx · COINx · HOODx` — tokenized US equities chosen for distinct behaviors
 (AI momentum, retail crowding, large-cap benchmark, crypto-equity bridge, fintech reflexivity).
@@ -160,6 +185,10 @@ All routes are Next.js Route Handlers (Node runtime).
 | --- | --- |
 | `GET /api/agent/tick?source=live&log=1` | One autonomous agent cycle: scan + tick summary + alerts (optionally logs to ledger). |
 | `POST /api/ask` | Natural-language agent. `{ question, source?: "live"\|"sim" }` → engine-grounded answer. |
+| `GET /api/signals` | Signal Zoo: benchmarked signal library with information coefficients. |
+| `GET /api/autopilot` | Strategy Autopilot allocation timeline + rotation log. |
+| `GET /api/shadow` | Decision diagnostics + naive-baseline counterfactuals. |
+| `GET /api/council/stream?asset=` | SSE stream of the council deliberating agent-by-agent. |
 | `GET /api/board?llm=1&source=live` | Strategy board (5 packets) + Agent Crowding Index. `llm=1` enables Qwen; `source=live` uses real Bitget+Yahoo data. |
 | `POST /api/scan` | LLM-enriched live scan, resolve paper trades, append to ledger. |
 | `GET /api/ledger?asset=&strategy=&format=csv` | Ledger entries + stats; CSV/JSON export. |
