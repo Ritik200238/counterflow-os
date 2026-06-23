@@ -35,6 +35,28 @@ observe → detect regime → route strategy → council debate → risk governo
         → paper execute → resolve & log → update strategy performance memory
 ```
 
+```mermaid
+flowchart LR
+  subgraph Data
+    B[Bitget tokenized prices]
+    Y[Yahoo underlying]
+    S[Seeded simulation]
+  end
+  Data --> SC[Scores: Crowd · Gap · Liquidity · Risk]
+  SC --> RG[Regime detection]
+  RG --> CO[8-agent council]
+  CO --> RT[Strategy router]
+  RT --> GV[Risk governor]
+  GV --> EX[Paper executor]
+  EX --> LD[(JSONL ledger)]
+  LD --> MEM[Strategy memory + autopilot]
+  RT --> PK[[Trade Decision Packet]]
+  GV --> PK
+  CO --> PK
+  PK --> UI[Dashboard / API / CLI]
+  MEM --> UI
+```
+
 Every step is deterministic and inspectable. An optional LLM layer (Qwen) writes the
 human-readable council debate on top of the numbers — it **never changes the decision**,
 so results stay reproducible. If the LLM is unavailable, a deterministic narrator takes over
