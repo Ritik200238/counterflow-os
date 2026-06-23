@@ -175,8 +175,12 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
           }
         />
         <div className="grid gap-3 sm:grid-cols-2">
-          {p.council.map((a) => (
-            <div key={a.agent} className="rounded-xl border hairline bg-black/20 p-3">
+          {p.council.map((a, i) => (
+            <div
+              key={a.agent}
+              className="cf-reveal rounded-xl border hairline bg-black/20 p-3"
+              style={{ animationDelay: `${i * 90}ms` }}
+            >
               <div className="flex items-center justify-between">
                 <span className={`text-sm font-semibold ${agentColor(a.agent)}`}>{a.agent}</span>
                 <Badge className="border-slate-500/40 bg-slate-500/10 text-slate-300">

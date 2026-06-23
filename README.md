@@ -97,6 +97,13 @@ npm test              # engine invariant suite (reproducibility, scores, regimes
 
 ## What's inside
 
+### Autonomous Agent (it runs on its own)
+The `/agent` console is a self-operating loop: it scans the live market every 25s, routes
+strategies, and streams a proactive activity feed — actionable setups, extreme crowding, large
+tracking errors, regime shifts, and risk-blocks — with a live posture and Start/Pause control.
+`GET /api/agent/tick` exposes one cycle for any external scheduler. This is what makes it an
+*agent*, not a dashboard.
+
 ### Ask CounterFlow — natural-language agent
 Ask in plain English ("Why is the system standing aside?", "Which token is most mispriced?",
 "Is NVDAx a buy?") and get an answer **grounded in the real engine output** — regimes, strategies,
@@ -151,6 +158,7 @@ All routes are Next.js Route Handlers (Node runtime).
 
 | Method & Route | Description |
 | --- | --- |
+| `GET /api/agent/tick?source=live&log=1` | One autonomous agent cycle: scan + tick summary + alerts (optionally logs to ledger). |
 | `POST /api/ask` | Natural-language agent. `{ question, source?: "live"\|"sim" }` → engine-grounded answer. |
 | `GET /api/board?llm=1&source=live` | Strategy board (5 packets) + Agent Crowding Index. `llm=1` enables Qwen; `source=live` uses real Bitget+Yahoo data. |
 | `POST /api/scan` | LLM-enriched live scan, resolve paper trades, append to ledger. |
