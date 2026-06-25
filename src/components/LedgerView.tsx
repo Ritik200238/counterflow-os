@@ -56,7 +56,7 @@ export default function LedgerView() {
       const res = await fetch("/api/seed", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ decisions: 160 }),
+        body: JSON.stringify({ decisions: 480 }),
       }).then((r) => r.json());
       setNote(`Backtest written: ${res.written} decisions.`);
       setRefreshKey((k) => k + 1);

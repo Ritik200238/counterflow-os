@@ -23,7 +23,7 @@ function dayKey(iso: string): string {
 }
 
 export async function runBacktest(opts: BacktestOptions = {}): Promise<LedgerEntry[]> {
-  const decisions = opts.decisions ?? 160;
+  const decisions = opts.decisions ?? 480;
   const seed = opts.seed ?? "counterflow-backtest";
   const startTime = opts.startTime ?? "2026-03-03T00:00:00.000Z";
   const stepMinutes = opts.stepMinutes ?? 12 * 60; // every 12h

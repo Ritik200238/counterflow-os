@@ -118,7 +118,7 @@ function summarize(name: string, description: string, returns: number[]): Baseli
   };
 }
 
-export function computeBaselines(decisions = 160, seed = "counterflow-backtest"): BaselineResult[] {
+export function computeBaselines(decisions = 480, seed = "counterflow-backtest"): BaselineResult[] {
   const rng = mulberry32(hashSeed(seed));
   const rngRand = mulberry32(hashSeed(seed + ":shadow"));
   const startTime = "2026-03-03T00:00:00.000Z";

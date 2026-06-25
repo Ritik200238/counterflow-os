@@ -27,6 +27,7 @@ export type ScenarioKind =
   | "fairValueGap"
   | "macroShock"
   | "earnings"
+  | "breakout"
   | "noise";
 
 export interface ScenarioSpec {
@@ -113,9 +114,9 @@ function cleanTrend(rng: Rng): ScenarioSpec {
     yieldsChangeBps: rngRange(rng, -3, 3),
     dxyChangePct: rngRange(rng, -0.2, 0.2),
     dataFreshnessSec: rngRange(rng, 10, 60),
-    // Momentum follow: long, wins ~57% of the time.
-    forwardDriftPct: edgeDrift(rng, 0.57, 1.2, 3.0, 0.8, 2.2, 1),
-    forwardVolPct: 1.8,
+    // Momentum follow: long, wins ~61% of the time.
+    forwardDriftPct: edgeDrift(rng, 0.61, 1.2, 3.0, 0.8, 2.2, 1),
+    forwardVolPct: 1.4,
   };
 }
 
@@ -172,7 +173,7 @@ function fairValueGap(rng: Rng): ScenarioSpec {
     dataFreshnessSec: rngRange(rng, 10, 50),
     // Fair-Value Convergence: gap closes (token rich -> drifts down) ~70% of the time.
     forwardDriftPct: edgeDrift(rng, 0.7, 1.0, 2.5, 0.5, 1.8, -1),
-    forwardVolPct: 1.6,
+    forwardVolPct: 1.4,
   };
 }
 
@@ -199,8 +200,9 @@ function macroShock(rng: Rng): ScenarioSpec {
     yieldsChangeBps: rngRange(rng, 8, 25),
     dxyChangePct: rngRange(rng, 0.4, 1.2),
     dataFreshnessSec: rngRange(rng, 10, 60),
-    forwardDriftPct: dir * rngRange(rng, 0.5, 2.5),
-    forwardVolPct: 3.5,
+    // Macro Rebalance follows the broad move; it continues ~60% of the time.
+    forwardDriftPct: edgeDrift(rng, 0.6, 0.8, 2.5, 0.5, 2.0, dir),
+    forwardVolPct: 1.4,
   };
 }
 
@@ -227,8 +229,9 @@ function earnings(rng: Rng): ScenarioSpec {
     yieldsChangeBps: rngRange(rng, -4, 4),
     dxyChangePct: rngRange(rng, -0.2, 0.2),
     dataFreshnessSec: rngRange(rng, 10, 50),
-    forwardDriftPct: dir * rngRange(rng, 0.5, 3.0),
-    forwardVolPct: 3.0,
+    // Earnings Drift follows the post-event move; it drifts on ~60% of the time.
+    forwardDriftPct: edgeDrift(rng, 0.6, 1.0, 3.0, 0.5, 2.0, dir),
+    forwardVolPct: 1.4,
   };
 }
 
@@ -258,12 +261,41 @@ function noise(rng: Rng): ScenarioSpec {
   };
 }
 
+function breakout(rng: Rng): ScenarioSpec {
+  const dir = rng() < 0.6 ? 1 : -1;
+  return {
+    kind: "breakout",
+    regimeHint: "Clean Trend",
+    gapPct: rngRange(rng, 0.2, 1.0),
+    velocityPct: dir * rngRange(rng, 3.6, 6.0),
+    sectorConfirmation: rngRange(rng, 0.55, 0.85),
+    sectorIndexChangePct: dir * rngRange(rng, 0.8, 2.0),
+    nasdaqFuturesChangePct: dir * rngRange(rng, 0.3, 1.0),
+    newsIntensity: rngRange(rng, 0.4, 0.7),
+    newsSentiment: dir * rngRange(rng, 0.4, 0.8),
+    newsEvidenceQuality: rngRange(rng, 0.5, 0.8),
+    socialHypeSpike: rngRange(rng, 0.4, 0.6),
+    spreadPct: rngRange(rng, 0.12, 0.28),
+    volMult: rngRange(rng, 2.0, 3.5),
+    volatilityPct: rngRange(rng, 3.0, 5.5),
+    macroEventActive: false,
+    earningsEventActive: false,
+    yieldsChangeBps: rngRange(rng, -4, 4),
+    dxyChangePct: rngRange(rng, -0.2, 0.2),
+    dataFreshnessSec: rngRange(rng, 10, 50),
+    // Volatility Breakout: breakouts follow through ~60% of the time.
+    forwardDriftPct: edgeDrift(rng, 0.6, 1.5, 3.5, 0.6, 2.5, dir),
+    forwardVolPct: 1.3,
+  };
+}
+
 const PRESETS: Record<ScenarioKind, (rng: Rng) => ScenarioSpec> = {
   cleanTrend,
   crowdedHype,
   fairValueGap,
   macroShock,
   earnings,
+  breakout,
   noise,
 };
 
@@ -282,7 +314,11 @@ const RANDOM_POOL: ScenarioKind[] = [
   "fairValueGap",
   "fairValueGap",
   "fairValueGap",
+  "breakout",
+  "breakout",
   "macroShock",
+  "macroShock",
+  "earnings",
   "earnings",
   "noise",
   "noise",

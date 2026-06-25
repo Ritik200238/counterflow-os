@@ -11,7 +11,7 @@ export const runtime = "nodejs";
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
-    const decisions = Number(body?.decisions) || 160;
+    const decisions = Number(body?.decisions) || 480;
     const seed = typeof body?.seed === "string" ? body.seed : "counterflow-backtest";
 
     const entries = await runBacktest({ decisions, seed });

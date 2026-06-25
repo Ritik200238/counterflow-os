@@ -128,12 +128,18 @@ export type Strategy =
   | "CounterFlow Fade"
   | "Momentum Follow"
   | "Fair-Value Convergence"
+  | "Volatility Breakout"
+  | "Earnings Drift"
+  | "Macro Rebalance"
   | "No-Trade / Risk-Off";
 
 export const STRATEGIES: Strategy[] = [
   "CounterFlow Fade",
   "Momentum Follow",
   "Fair-Value Convergence",
+  "Volatility Breakout",
+  "Earnings Drift",
+  "Macro Rebalance",
   "No-Trade / Risk-Off",
 ];
 

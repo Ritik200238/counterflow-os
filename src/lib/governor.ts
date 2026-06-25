@@ -28,9 +28,21 @@ function stopTake(strategy: Strategy, gapPct: number): { stop: number; take: num
       const take = clamp(Math.abs(gapPct) * 0.7, 1.5, 3.5);
       return { stop: 1.2, take: round(take, 2) };
     }
+    case "Volatility Breakout":
+      return { stop: 1.5, take: 3.6 };
+    case "Earnings Drift":
+      return { stop: 1.5, take: 4.0 };
+    case "Macro Rebalance":
+      return { stop: 1.5, take: 2.5 };
     case "No-Trade / Risk-Off":
       return { stop: 0, take: 0 };
   }
+}
+
+// Strategies explicitly designed to trade THROUGH a high-impact event
+// (PRD §14.1: "no trade during events unless the macro strategy is selected").
+function isEventStrategy(s: Strategy): boolean {
+  return s === "Macro Rebalance" || s === "Earnings Drift";
 }
 
 export interface RiskGovernorInput {
@@ -60,7 +72,10 @@ export function riskGovernor(
     blocks.push(
       `Daily drawdown ${round(drawdown, 2)}% hit the ${RISK_LIMITS.maxDailyDrawdownPct}% loss limit — kill switch engaged.`,
     );
-  } else if (risk.score >= 0.75 || (eventRisk && strategy !== "No-Trade / Risk-Off")) {
+  } else if (
+    risk.score >= 0.75 ||
+    (eventRisk && !isEventStrategy(strategy) && strategy !== "No-Trade / Risk-Off")
+  ) {
     riskState = "Risk-Off";
   } else if (risk.score >= 0.5 || crowd.score >= 80) {
     riskState = "Caution";
@@ -92,7 +107,7 @@ export function riskGovernor(
       `Council agreement ${router.agreement.agree}/${router.agreement.total} below the ${RISK_LIMITS.minAgreementFrac * 100}% minimum.`,
     );
   }
-  if (eventRisk) {
+  if (eventRisk && !isEventStrategy(strategy)) {
     blocks.push("High-impact event active — new directional risk blocked by policy.");
   }
   if (riskState === "Kill Switch" || riskState === "Risk-Off") {

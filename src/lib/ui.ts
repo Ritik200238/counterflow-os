@@ -38,6 +38,12 @@ export function strategyColor(s: Strategy): string {
       return "text-rose-300";
     case "Fair-Value Convergence":
       return "text-cyan-300";
+    case "Volatility Breakout":
+      return "text-amber-300";
+    case "Earnings Drift":
+      return "text-violet-300";
+    case "Macro Rebalance":
+      return "text-orange-300";
     case "No-Trade / Risk-Off":
       return "text-slate-400";
   }

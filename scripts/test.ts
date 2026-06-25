@@ -78,7 +78,7 @@ async function main() {
   let i = 0;
   for (const m of board) {
     const { packet: p } = await scanAsset(m, { decisionId: `t_${++i}`, useLLM: false });
-    ok(p.rejectedStrategies.length === 3, `${p.asset}: exactly 3 rejected strategies`);
+    ok(p.rejectedStrategies.length === 6, `${p.asset}: exactly 6 rejected strategies`);
     ok(
       !p.rejectedStrategies.some((r) => r.strategy === p.selectedStrategy),
       `${p.asset}: selected strategy not in rejected list`,
@@ -99,7 +99,7 @@ async function main() {
   const tsla = (await scanAsset(board.find((m) => m.meta.symbol === "TSLAx")!, { decisionId: "x", useLLM: false })).packet;
   ok(tsla.selectedStrategy === "CounterFlow Fade" && tsla.finalAction === "short_paper", "TSLAx routes to a CounterFlow Fade short");
   const hood = (await scanAsset(board.find((m) => m.meta.symbol === "HOODx")!, { decisionId: "y", useLLM: false })).packet;
-  ok(hood.finalAction === "no_trade", "HOODx (macro event) is blocked to no-trade by policy");
+  ok(hood.selectedStrategy === "Macro Rebalance", "HOODx (macro shock) routes to the Macro Rebalance strategy");
 
   // ---- E. Ledger accounting honesty ----
   section("Ledger accounting");

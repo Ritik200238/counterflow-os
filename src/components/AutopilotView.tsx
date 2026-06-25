@@ -10,6 +10,9 @@ const ORDER: Strategy[] = [
   "Momentum Follow",
   "CounterFlow Fade",
   "Fair-Value Convergence",
+  "Volatility Breakout",
+  "Earnings Drift",
+  "Macro Rebalance",
   "No-Trade / Risk-Off",
 ];
 
@@ -17,6 +20,9 @@ const FILL: Record<Strategy, string> = {
   "Momentum Follow": "#34d399",
   "CounterFlow Fade": "#fb7185",
   "Fair-Value Convergence": "#22d3ee",
+  "Volatility Breakout": "#fbbf24",
+  "Earnings Drift": "#a78bfa",
+  "Macro Rebalance": "#fb923c",
   "No-Trade / Risk-Off": "#64748b",
 };
 
@@ -24,6 +30,9 @@ const BAR_CLASS: Record<Strategy, string> = {
   "Momentum Follow": "bg-emerald-400",
   "CounterFlow Fade": "bg-rose-400",
   "Fair-Value Convergence": "bg-cyan-400",
+  "Volatility Breakout": "bg-amber-400",
+  "Earnings Drift": "bg-violet-400",
+  "Macro Rebalance": "bg-orange-400",
   "No-Trade / Risk-Off": "bg-slate-500",
 };
 

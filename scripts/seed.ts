@@ -10,7 +10,7 @@ import { table, pctStr, rule } from "./format";
 
 async function main() {
   loadDotEnv();
-  const decisions = Number(process.argv[2]) || 160;
+  const decisions = Number(process.argv[2]) || 480;
   const seed = process.argv[3] || "counterflow-backtest";
 
   console.log(`Running CounterFlow OS backtest: ${decisions} decisions, seed="${seed}"...`);

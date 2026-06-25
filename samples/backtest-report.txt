@@ -1,27 +1,32 @@
 
 ════ COUNTERFLOW OS — LEDGER REPORT ══════════════════════════════
-Decisions: 160
-Executed paper trades: 111  (closed 111, open 0)
-No-Trade decisions: 49
-Win rate: 57.7%  (64W / 47L)
-Avg return / trade: +0.21%
-Total PnL (portfolio %): +2.38%
-Max drawdown: 1.32%
-Sharpe (per trade): 0.134  |  Sortino: 0.207  |  Profit factor: 1.34
-Best trade: +2.83%  |  Worst trade: -2.15%
+Decisions: 480
+Executed paper trades: 396  (closed 396, open 0)
+No-Trade decisions: 84
+Win rate: 57.1%  (226W / 170L)
+Avg return / trade: +0.22%
+Total PnL (portfolio %): +7.86%
+Max drawdown: 1.40%
+Sharpe (per trade): 0.138  |  Sortino: 0.214  |  Profit factor: 1.36
+Best trade: +3.57%  |  Worst trade: -2.37%
 
 ════ STRATEGY PERFORMANCE MEMORY ═════════════════════════════════
 Strategy                Trades  WinRate  AvgRet  BestRegime      WorstRegime     Weight
 ----------------------  ------  -------  ------  --------------  --------------  ------
-CounterFlow Fade        40      57%      +0.04%  Crowded Hype    Crowded Hype    26%   
-Momentum Follow         30      57%      +0.42%  Clean Trend     Clean Trend     30%   
-Fair-Value Convergence  41      59%      +0.21%  Fair-Value Gap  Fair-Value Gap  29%   
-No-Trade / Risk-Off     42      —        —       —               —               15%   
+CounterFlow Fade        67      72%      +0.56%  Crowded Hype    Crowded Hype    21%   
+Momentum Follow         66      47%      +0.02%  Clean Trend     Clean Trend     11%   
+Fair-Value Convergence  88      65%      +0.45%  Fair-Value Gap  Fair-Value Gap  18%   
+Volatility Breakout     58      52%      +0.18%  Clean Trend     Clean Trend     13%   
+Earnings Drift          63      54%      +0.12%  Earnings Event  Earnings Event  13%   
+Macro Rebalance         54      48%      -0.18%  Macro Shock     Clean Trend     10%   
+No-Trade / Risk-Off     72      —        —       —               —               14%   
 
 ════ BY REGIME ═══════════════════════════════════════════════════
 Regime          Trades  WinRate  AvgRet
 --------------  ------  -------  ------
-Clean Trend     30      57%      +0.42%
-Crowded Hype    40      57%      +0.04%
-Fair-Value Gap  41      59%      +0.21%
+Clean Trend     128     49%      +0.08%
+Crowded Hype    67      72%      +0.56%
+Fair-Value Gap  88      65%      +0.45%
+Macro Shock     50      48%      -0.16%
+Earnings Event  63      54%      +0.12%
 

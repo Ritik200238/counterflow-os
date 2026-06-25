@@ -246,6 +246,12 @@ export function primaryStance(strategy: Strategy): Stance {
       return "fade";
     case "Fair-Value Convergence":
       return "converge";
+    case "Volatility Breakout":
+      return "follow";
+    case "Earnings Drift":
+      return "follow";
+    case "Macro Rebalance":
+      return "avoid";
     case "No-Trade / Risk-Off":
       return "avoid";
   }

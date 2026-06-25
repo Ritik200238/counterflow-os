@@ -7,7 +7,14 @@ import { clamp, round } from "@/lib/util/num";
 // cash floor for No-Trade / Risk-Off. Produces the allocation *timeline* (so you
 // can see it rotate) plus rotation notes when the dominant strategy changes.
 
-const ACTIVE: Strategy[] = ["Momentum Follow", "CounterFlow Fade", "Fair-Value Convergence"];
+const ACTIVE: Strategy[] = [
+  "Momentum Follow",
+  "CounterFlow Fade",
+  "Fair-Value Convergence",
+  "Volatility Breakout",
+  "Earnings Drift",
+  "Macro Rebalance",
+];
 const CASH: Strategy = "No-Trade / Risk-Off";
 const CASH_FLOOR = 15;
 
