@@ -24,6 +24,7 @@ function Nav() {
           {[
             ["/", "Dashboard"],
             ["/agent", "Agent"],
+            ["/portfolio", "Portfolio"],
             ["/ask", "Ask"],
             ["/signals", "Signals"],
             ["/autopilot", "Autopilot"],

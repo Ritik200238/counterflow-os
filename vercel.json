@@ -4,6 +4,10 @@
     {
       "path": "/api/agent/tick?log=1&source=live",
       "schedule": "0 14 * * *"
+    },
+    {
+      "path": "/api/portfolio/tick",
+      "schedule": "0 16 * * *"
     }
   ]
 }

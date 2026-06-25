@@ -47,6 +47,8 @@ next-env.d.ts
 
 # Note: data/ledger.jsonl IS committed — it is the reproducible paper-trading
 # proof-of-run artifact for the hackathon submission (PRD §22).
+# Live portfolio is per-run state (Blob in prod) — not committed.
+data/portfolio.json
 
 .vercel
 .env*
