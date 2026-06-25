@@ -3,6 +3,9 @@ import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { ClerkProvider } from "@clerk/nextjs";
+import { clerkEnabled } from "@/lib/auth";
+import AuthButton from "@/components/AuthButton";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -45,6 +48,7 @@ function Nav() {
           <span className="hidden rounded-full border hairline px-2.5 py-1 text-muted sm:inline">
             Bitget AI Base Camp S1
           </span>
+          <AuthButton />
         </div>
       </div>
     </header>
@@ -52,7 +56,7 @@ function Nav() {
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return (
+  const tree = (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
       <body>
         <Nav />
@@ -65,4 +69,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </body>
     </html>
   );
+  // ClerkProvider only when configured — public demo runs without it.
+  return clerkEnabled ? <ClerkProvider>{tree}</ClerkProvider> : tree;
 }

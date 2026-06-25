@@ -97,6 +97,21 @@ npm test              # engine invariant suite (reproducibility, scores, regimes
 
 ## What's inside
 
+### Live Portfolio (real open → monitor → close loop)
+`/portfolio` runs a $100k paper portfolio off **real Bitget prices**: the agent opens positions from
+actionable decisions, marks them to market, and closes them on stop / take / time — with realized +
+unrealized P&L, equity, exposure, and win rate. A daily Vercel cron ticks it headless.
+
+### Seven strategies
+Momentum Follow · CounterFlow Fade · Fair-Value Convergence · **Volatility Breakout** ·
+**Earnings Drift** · **Macro Rebalance** · No-Trade / Risk-Off. The two event strategies are the only
+ones allowed to trade *through* a high-impact macro/earnings event (PRD §14.1).
+
+### Accounts (optional)
+Sign-in is wired via Clerk and **non-gating** — the public demo runs fully without it. Add
+`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` + `CLERK_SECRET_KEY` to activate accounts (same wire-it /
+activate-with-keys pattern as the Qwen layer). `GET /api/me` returns the signed-in identity.
+
 ### Autonomous Agent (it runs on its own)
 The `/agent` console is a self-operating loop: it scans the live market every 25s, routes
 strategies, and streams a proactive activity feed — actionable setups, extreme crowding, large
@@ -184,6 +199,7 @@ All routes are Next.js Route Handlers (Node runtime).
 | Method & Route | Description |
 | --- | --- |
 | `GET /api/agent/tick?source=live&log=1` | One autonomous agent cycle: scan + tick summary + alerts (optionally logs to ledger). |
+| `GET /api/portfolio` · `POST /api/portfolio/tick` · `/reset` | Live paper portfolio: snapshot, open/monitor/close cycle, reset. |
 | `POST /api/ask` | Natural-language agent. `{ question, source?: "live"\|"sim" }` → engine-grounded answer. |
 | `GET /api/signals` | Signal Zoo: benchmarked signal library with information coefficients. |
 | `GET /api/autopilot` | Strategy Autopilot allocation timeline + rotation log. |
