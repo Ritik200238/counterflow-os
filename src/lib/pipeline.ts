@@ -20,13 +20,24 @@ import { round } from "@/lib/util/num";
 // (PRD §8.1 system loop). This is where every module composes —
 // signals -> council -> router -> risk governor -> execution -> reasoning -> packet.
 
-const DATA_SOURCES = [
+// Live snapshots are built from real feeds (and have no forward path); demo
+// snapshots are seeded. The data-source labels must reflect which is true.
+const DATA_SOURCES_LIVE = [
+  "Bitget tokenized price + order book",
+  "Yahoo underlying equity",
+  "QQQ sector index",
+  "Nasdaq futures (NQ)",
+  "DXY (dollar index)",
+  "activity-derived sentiment (no live news feed)",
+];
+
+const DATA_SOURCES_SIM = [
   "tokenized price feed (sim)",
-  "underlying equity proxy",
-  "sector index / ETF",
-  "Nasdaq futures",
-  "news & sentiment feed",
-  "macro/earnings calendar",
+  "underlying equity proxy (sim)",
+  "sector index / ETF (sim)",
+  "Nasdaq futures (sim)",
+  "news & sentiment (modeled)",
+  "macro/earnings calendar (modeled)",
 ];
 
 export interface ScanOptions {
@@ -60,6 +71,10 @@ export async function scanAsset(
   } else {
     finalAction = router.direction === "short" ? "short_paper" : "long_paper";
   }
+
+  // Live snapshots are built from real feeds and carry no forward path.
+  const isLive = market.forwardPath.length === 0;
+  const dataSources = isLive ? DATA_SOURCES_LIVE : DATA_SOURCES_SIM;
 
   // Resolve the paper trade against the forward price path.
   const s = sig.snapshot;
@@ -140,7 +155,7 @@ export async function scanAsset(
     reasoningSource: reasoning.source,
     reasoningModel: reasoning.model,
     dataFreshness,
-    dataSourcesUsed: DATA_SOURCES,
+    dataSourcesUsed: dataSources,
   };
 
   const ledgerEntry: LedgerEntry = {
@@ -169,7 +184,7 @@ export async function scanAsset(
     exitReason: execution.exitReason,
     holdMinutes: execution.holdMinutes,
     agentRationale: reasoning.rationale,
-    dataSourcesUsed: DATA_SOURCES,
+    dataSourcesUsed: dataSources,
     riskState: risk.riskState,
   };
 

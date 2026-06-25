@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Panel, SectionTitle, Bar, Spinner } from "@/components/ui";
+import { Panel, SectionTitle, Bar, Spinner, ErrorNote } from "@/components/ui";
 import { strategyShort } from "@/lib/ui";
 import type { Strategy } from "@/lib/types";
 import type { AutopilotResult } from "@/lib/autopilot";
@@ -70,12 +70,18 @@ function Timeline({ data }: { data: AutopilotResult }) {
 export default function AutopilotView() {
   const [data, setData] = useState<AutopilotResult | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
     fetch("/api/autopilot")
       .then((r) => r.json())
-      .then((d) => active && setData(d as AutopilotResult))
+      .then((d) => {
+        if (!active) return;
+        if (d.error) setError(d.error);
+        else setData(d as AutopilotResult);
+      })
+      .catch((e) => active && setError(String(e)))
       .finally(() => active && setLoading(false));
     return () => {
       active = false;
@@ -83,6 +89,7 @@ export default function AutopilotView() {
   }, []);
 
   if (loading && !data) return <Spinner label="Loading autopilot allocation…" />;
+  if (error) return <ErrorNote message={`Couldn't load Strategy Autopilot: ${error}`} />;
   if (!data) return null;
 
   return (

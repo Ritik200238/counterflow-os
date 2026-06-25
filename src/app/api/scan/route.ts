@@ -14,12 +14,14 @@ export async function POST(req: Request) {
   if (limited) return limited;
   try {
     const existing = await readLedger();
-    const board = await scanBoard({ useLLM: true, startSeq: existing.length + 1 });
+    const board = await scanBoard({ useLLM: true, source: "live", startSeq: existing.length + 1 });
     const entries = board.decisions.map((d) => d.ledgerEntry);
     await appendLedger(entries);
     const all = [...existing, ...entries];
     return Response.json({
       appended: entries.length,
+      source: board.source,
+      sourceNote: board.sourceNote,
       crowdingIndex: board.crowdingIndex,
       decisions: board.decisions.map((d) => d.packet),
       stats: computeLedgerStats(all),

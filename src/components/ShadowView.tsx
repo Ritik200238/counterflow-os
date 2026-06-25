@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Panel, SectionTitle, Stat, Bar, Spinner } from "@/components/ui";
+import { Panel, SectionTitle, Stat, Bar, Spinner, ErrorNote } from "@/components/ui";
 import { pctStr } from "@/lib/ui";
 import type { BaselineResult, Diagnostics } from "@/lib/shadow";
 
@@ -14,12 +14,18 @@ interface ShadowData {
 export default function ShadowView() {
   const [data, setData] = useState<ShadowData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
     fetch("/api/shadow")
       .then((r) => r.json())
-      .then((d) => active && setData(d as ShadowData))
+      .then((d) => {
+        if (!active) return;
+        if (d.error) setError(d.error);
+        else setData(d as ShadowData);
+      })
+      .catch((e) => active && setError(String(e)))
       .finally(() => active && setLoading(false));
     return () => {
       active = false;
@@ -27,6 +33,7 @@ export default function ShadowView() {
   }, []);
 
   if (loading && !data) return <Spinner label="Running shadow diagnostics…" />;
+  if (error) return <ErrorNote message={`Couldn't load Decision Shadow: ${error}`} />;
   if (!data) return null;
 
   const d = data.diagnostics;

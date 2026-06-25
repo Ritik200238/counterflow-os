@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui";
 import { agentColor, stanceLabel, strategyShort, actionLabel } from "@/lib/ui";
 import type { AgentOutput } from "@/lib/types";
@@ -17,20 +17,38 @@ export default function StreamingCouncil({ symbol, source }: { symbol: string; s
   const [streaming, setStreaming] = useState(false);
   const [agents, setAgents] = useState<AgentOutput[]>([]);
   const [verdict, setVerdict] = useState<Verdict | null>(null);
+  const [streamError, setStreamError] = useState<string | null>(null);
+  const [streamSource, setStreamSource] = useState<"sim" | "live">(source);
   const esRef = useRef<EventSource | null>(null);
+  const doneRef = useRef(false);
+
+  // Close any open stream on unmount or when the asset/source changes (cleanup
+  // runs before the next render with new deps), preventing leaks + stale streams.
+  useEffect(() => {
+    return () => esRef.current?.close();
+  }, [symbol, source]);
 
   function start() {
     esRef.current?.close();
+    doneRef.current = false;
     setAgents([]);
     setVerdict(null);
+    setStreamError(null);
     setStreaming(true);
     const es = new EventSource(`/api/council/stream?asset=${symbol}&source=${source}`);
     esRef.current = es;
     es.onmessage = (e) => {
-      const msg = JSON.parse(e.data);
-      if (msg.type === "agent") setAgents((prev) => [...prev, msg.agent as AgentOutput]);
+      let msg: { type: string; agent?: AgentOutput; source?: "sim" | "live" } & Partial<Verdict>;
+      try {
+        msg = JSON.parse(e.data);
+      } catch {
+        return;
+      }
+      if (msg.type === "meta" && msg.source) setStreamSource(msg.source);
+      else if (msg.type === "agent" && msg.agent) setAgents((prev) => [...prev, msg.agent as AgentOutput]);
       else if (msg.type === "verdict") setVerdict(msg as Verdict);
       else if (msg.type === "done") {
+        doneRef.current = true;
         es.close();
         setStreaming(false);
       }
@@ -38,13 +56,17 @@ export default function StreamingCouncil({ symbol, source }: { symbol: string; s
     es.onerror = () => {
       es.close();
       setStreaming(false);
+      // A clean end fires onerror after close; only flag if we didn't finish.
+      if (!doneRef.current) setStreamError("Council stream failed — retry.");
     };
   }
 
   return (
     <div className="rounded-xl border hairline bg-black/30 p-4">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-slate-200">Live council stream</span>
+        <span className="text-sm font-medium text-slate-200">
+          Council stream <span className="text-muted">· {streamSource === "live" ? "live" : "demo"}</span>
+        </span>
         <button
           onClick={start}
           disabled={streaming}
@@ -53,6 +75,8 @@ export default function StreamingCouncil({ symbol, source }: { symbol: string; s
           {streaming ? "Deliberating…" : "▶ Watch the council deliberate"}
         </button>
       </div>
+
+      {streamError && <p className="mt-2 text-xs text-rose-300">{streamError}</p>}
 
       {(agents.length > 0 || verdict) && (
         <div className="mt-3 space-y-1.5">

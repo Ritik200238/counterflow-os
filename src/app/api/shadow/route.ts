@@ -1,16 +1,18 @@
-import { readLedger } from "@/lib/ledger/store";
+import { runBacktest } from "@/lib/seed";
 import { computeBaselines, computeDiagnostics, type BaselineResult } from "@/lib/shadow";
 import { round } from "@/lib/util/num";
 
-// Decision Shadow: behavioral diagnostics on the agent's ledger + naive-baseline
-// counterfactuals on the same market.
+// Decision Shadow: behavioral diagnostics + naive-baseline counterfactuals — all
+// computed on the SAME canonical backtest market the baselines use, so the
+// "identical market" comparison is honest (not the live-polluted ledger).
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export async function GET() {
   try {
-    const entries = await readLedger();
+    // Run the canonical backtest the baselines are measured on (same seed/params).
+    const entries = await runBacktest();
     const diagnostics = computeDiagnostics(entries);
     const baselines = computeBaselines();
 

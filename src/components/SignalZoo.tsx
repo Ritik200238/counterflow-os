@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Panel, SectionTitle, Badge, Spinner } from "@/components/ui";
+import { Panel, SectionTitle, Badge, Spinner, ErrorNote } from "@/components/ui";
+import { ASSET_SYMBOLS } from "@/lib/types";
 import type { SignalBench, SignalVerdict } from "@/lib/signals";
 
 interface CurrentRow {
@@ -10,7 +11,7 @@ interface CurrentRow {
   values: Record<string, number>;
 }
 
-const ASSETS = ["NVDAx", "TSLAx", "AAPLx", "COINx", "HOODx"];
+const ASSETS = ASSET_SYMBOLS;
 
 const verdictBadge: Record<SignalVerdict, string> = {
   predictive: "border-emerald-500/40 bg-emerald-500/10 text-emerald-300",
@@ -30,6 +31,7 @@ export default function SignalZoo() {
   const [bench, setBench] = useState<SignalBench | null>(null);
   const [current, setCurrent] = useState<CurrentRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -37,9 +39,13 @@ export default function SignalZoo() {
       .then((r) => r.json())
       .then((d) => {
         if (!active) return;
-        setBench(d.bench as SignalBench);
-        setCurrent(d.current as CurrentRow[]);
+        if (d.error) setError(d.error);
+        else {
+          setBench(d.bench as SignalBench);
+          setCurrent(d.current as CurrentRow[]);
+        }
       })
+      .catch((e) => active && setError(String(e)))
       .finally(() => active && setLoading(false));
     return () => {
       active = false;
@@ -47,6 +53,7 @@ export default function SignalZoo() {
   }, []);
 
   if (loading && !bench) return <Spinner label="Benchmarking signal zoo…" />;
+  if (error) return <ErrorNote message={`Couldn't load the Signal Zoo: ${error}`} />;
   if (!bench) return null;
 
   const currentByKey = new Map(current.map((c) => [c.key, c]));
@@ -96,7 +103,7 @@ export default function SignalZoo() {
                     </td>
                     {ASSETS.map((a) => (
                       <td key={a} className="mono py-2 pr-2 text-right text-slate-300">
-                        {cur ? cur.values[a] : "—"}
+                        {cur && cur.values[a] !== undefined ? cur.values[a].toFixed(2) : "—"}
                       </td>
                     ))}
                   </tr>

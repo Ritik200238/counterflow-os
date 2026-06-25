@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Panel, SectionTitle, Stat, Spinner } from "@/components/ui";
 import { directionColor, pctStr, strategyShort } from "@/lib/ui";
@@ -23,16 +23,27 @@ export default function PortfolioView() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
+  const [stale, setStale] = useState(false);
+  // Refs so the interval (which closes over initial state) sees current values.
+  const busyRef = useRef(false);
 
   useEffect(() => {
     let alive = true;
-    const run = () =>
+    const run = () => {
+      if (busyRef.current) return; // don't let the poll clobber a fresh tick/reset
       fetch("/api/portfolio")
         .then((r) => r.json())
         .then((d) => {
-          if (alive && !d.error) setData(d);
+          if (!alive || busyRef.current) return;
+          if (d.error) setStale(true);
+          else {
+            setData(d);
+            setStale(false);
+          }
         })
+        .catch(() => alive && setStale(true))
         .finally(() => alive && setLoading(false));
+    };
     run();
     const id = setInterval(run, 20_000); // mark-to-market refresh
     return () => {
@@ -43,29 +54,40 @@ export default function PortfolioView() {
 
   async function tick() {
     setBusy("tick");
+    busyRef.current = true;
     setNote(null);
     try {
       const res = await fetch("/api/portfolio/tick", { method: "POST" }).then((r) => r.json());
       if (res.error) setNote(res.error);
       else {
         setData(res);
-        setNote(`Tick: opened ${res.openedThisTick}, closed ${res.closedThisTick} (source ${res.source}).`);
+        setStale(false);
+        setNote(`Tick: opened ${res.openedThisTick}, closed ${res.closedThisTick} (source: ${res.source}).`);
       }
+    } catch (e) {
+      setNote(`Error: ${String(e)}`);
     } finally {
+      busyRef.current = false;
       setBusy(null);
     }
   }
 
   async function reset() {
     setBusy("reset");
+    busyRef.current = true;
     setNote(null);
     try {
       const res = await fetch("/api/portfolio/reset", { method: "POST" }).then((r) => r.json());
-      if (!res.error) {
+      if (res.error) setNote(res.error);
+      else {
         setData(res);
+        setStale(false);
         setNote("Portfolio reset to starting capital.");
       }
+    } catch (e) {
+      setNote(`Error: ${String(e)}`);
     } finally {
+      busyRef.current = false;
       setBusy(null);
     }
   }
@@ -77,11 +99,14 @@ export default function PortfolioView() {
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Live Portfolio</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Paper Portfolio</h1>
           <p className="mt-1 max-w-2xl text-sm text-muted">
-            The agent opens positions from real Bitget prices, marks them to market, and closes them
-            on stop / take / time. Paper / simulation — ${data.startingCapital.toLocaleString()} starting
-            capital. Source: <span className="mono">{data.source === "live" ? "live" : "demo"}</span>.
+            The agent opens positions from{" "}
+            {data.source === "live" ? "real Bitget prices" : "demo prices"}, marks them to market,
+            and closes them on stop / take / time. Shared paper portfolio (one global instance, not
+            per-user) — ${data.startingCapital.toLocaleString()} starting capital · source{" "}
+            <span className="mono">{data.source === "live" ? "live" : "demo"}</span>
+            {stale && <span className="text-amber-300"> · live data unavailable, showing last snapshot</span>}.
           </p>
         </div>
         <div className="flex gap-2">
@@ -123,7 +148,7 @@ export default function PortfolioView() {
 
       {/* Open positions */}
       <Panel>
-        <SectionTitle title="Open Positions" hint="Marked to live token prices" />
+        <SectionTitle title="Open Positions" hint={data.source === "live" ? "Marked to live token prices" : "Marked to demo prices"} />
         {data.open.length === 0 ? (
           <p className="py-6 text-sm text-muted">No open positions. Click <span className="text-cyan-300">Run tick</span> to scan live markets and open any actionable setups.</p>
         ) : (
@@ -163,9 +188,11 @@ export default function PortfolioView() {
       </Panel>
 
       {/* Closed positions */}
-      {data.closed.length > 0 && (
-        <Panel>
-          <SectionTitle title="Closed Positions" />
+      <Panel>
+        <SectionTitle title="Closed Positions" />
+        {data.closed.length === 0 ? (
+          <p className="py-6 text-sm text-muted">No closed trades yet.</p>
+        ) : (
           <div className="max-h-[420px] overflow-auto">
             <table className="w-full text-sm">
               <thead className="sticky top-0 bg-panel">
@@ -192,8 +219,8 @@ export default function PortfolioView() {
               </tbody>
             </table>
           </div>
-        </Panel>
-      )}
+        )}
+      </Panel>
     </div>
   );
 }

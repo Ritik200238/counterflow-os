@@ -28,6 +28,9 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
   const [error, setError] = useState<string | null>(null);
   const [showJson, setShowJson] = useState(false);
   const [history, setHistory] = useState<{ token: { t: number; price: number }[]; underlying: { t: number; price: number }[]; source: "live" | "sim" } | null>(null);
+  const [historyError, setHistoryError] = useState<string | null>(null);
+  const [boardSource, setBoardSource] = useState<"live" | "sim">("sim");
+  const [sourceNote, setSourceNote] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -36,13 +39,19 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
     if (source === "live") params.set("source", "live");
     fetch(`/api/board?${params}`)
       .then((r) => r.json())
-      .then((d: BoardResult) => {
+      .then((d: BoardResult & { error?: string }) => {
         if (!active) return;
+        if (d.error) {
+          setError(d.error);
+          return;
+        }
         const found = d.decisions?.find((x) => x.packet.asset === symbol) ?? null;
         if (!found) setError(`No decision found for ${symbol}`);
         else {
           setError(null);
           setDecision(found);
+          setBoardSource(d.source);
+          setSourceNote(d.sourceNote ?? null);
         }
       })
       .catch((e) => active && setError(String(e)))
@@ -57,9 +66,14 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
     fetch(`/api/history?asset=${symbol}&source=${source}`)
       .then((r) => r.json())
       .then((h) => {
-        if (active && !h.error) setHistory(h);
+        if (!active) return;
+        if (h.error) setHistoryError(h.error);
+        else {
+          setHistory(h);
+          setHistoryError(null);
+        }
       })
-      .catch(() => {});
+      .catch((e) => active && setHistoryError(String(e)));
     return () => {
       active = false;
     };
@@ -67,14 +81,25 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
 
   function switchSource(s: "sim" | "live") {
     if (s !== source) {
+      setError(null);
       setLoading(true);
       setSource(s);
     }
   }
 
   if (loading && !decision) return <Spinner label="Loading decision packet…" />;
-  if (error) return <p className="text-rose-300">{error}</p>;
+  if (error)
+    return (
+      <Panel>
+        <p className="text-rose-300">{error}</p>
+        <Link href="/" className="mt-3 inline-block text-sm text-cyan-300 hover:text-cyan-200">
+          ← Back to dashboard
+        </Link>
+      </Panel>
+    );
   if (!decision) return null;
+
+  const liveFellBack = source === "live" && boardSource === "sim";
 
   const p = decision.packet;
   const led = decision.ledgerEntry;
@@ -105,6 +130,7 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
               type="checkbox"
               checked={llm}
               onChange={(e) => {
+                setError(null);
                 setLoading(true);
                 setLlm(e.target.checked);
               }}
@@ -126,6 +152,12 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
         <span className="mono ml-auto text-xs text-muted">{p.decisionId}</span>
       </div>
 
+      {liveFellBack && (
+        <p className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-2.5 text-xs text-amber-300">
+          Live feed unavailable — showing the seeded demo. {sourceNote ?? ""}
+        </p>
+      )}
+
       {/* Rationale */}
       <Panel className="glow-cyan">
         <p className="text-sm leading-relaxed text-slate-200">{p.rationale}</p>
@@ -139,6 +171,8 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
         />
         {history ? (
           <PriceChart token={history.token} underlying={history.underlying} source={history.source} />
+        ) : historyError ? (
+          <p className="py-6 text-sm text-muted">Price history unavailable.</p>
         ) : (
           <Spinner label="Loading price history…" />
         )}

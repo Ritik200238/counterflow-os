@@ -135,7 +135,11 @@ export default function Dashboard() {
           </div>
         ) : loading ? (
           <Spinner />
-        ) : null}
+        ) : (
+          <p className="py-2 text-sm text-muted">
+            {error ? "Crowding index unavailable." : "No data."}
+          </p>
+        )}
       </Panel>
 
       {/* Strategy board */}

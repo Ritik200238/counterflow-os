@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import type { LedgerEntry, LedgerStats, StrategyMemory } from "@/lib/types";
 import { ASSET_SYMBOLS, STRATEGIES } from "@/lib/types";
-import { Panel, SectionTitle, Badge, Bar, Stat, Spinner } from "@/components/ui";
+import { Panel, SectionTitle, Badge, Bar, Stat, Spinner, ErrorNote } from "@/components/ui";
 import EquityChart from "@/components/EquityChart";
 import {
   pctStr,
@@ -25,6 +25,7 @@ export default function LedgerView() {
   const [strategy, setStrategy] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   // Bumped to trigger a reload after seed/scan actions, without calling a
   // setState-containing function directly inside the effect.
   const [refreshKey, setRefreshKey] = useState(0);
@@ -40,9 +41,15 @@ export default function LedgerView() {
     ])
       .then(([led, mem]) => {
         if (!active) return;
+        if (led?.error || mem?.error) {
+          setError(led?.error || mem?.error);
+          return;
+        }
+        setError(null);
         setData(led as LedgerResponse);
         setMemory(mem as StrategyMemory);
       })
+      .catch((e) => active && setError(String(e)))
       .finally(() => active && setLoading(false));
     return () => {
       active = false;
@@ -50,6 +57,9 @@ export default function LedgerView() {
   }, [asset, strategy, refreshKey]);
 
   async function runSeed() {
+    if (!window.confirm("This replaces the entire ledger with a fresh 480-decision backtest (any live-scan / cron entries are discarded). Continue?")) {
+      return;
+    }
     setBusy("seed");
     setNote(null);
     try {
@@ -58,7 +68,11 @@ export default function LedgerView() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ decisions: 480 }),
       }).then((r) => r.json());
-      setNote(`Backtest written: ${res.written} decisions.`);
+      if (res.error) {
+        setNote(`Could not seed: ${res.error}`);
+        return;
+      }
+      setNote(`Ledger replaced with a ${res.written}-decision backtest.`);
       setRefreshKey((k) => k + 1);
     } catch (e) {
       setNote(`Error: ${String(e)}`);
@@ -72,7 +86,14 @@ export default function LedgerView() {
     setNote(null);
     try {
       const res = await fetch("/api/scan", { method: "POST" }).then((r) => r.json());
-      setNote(`Live scan logged: ${res.appended} decisions appended.`);
+      if (res.error) {
+        setNote(`Could not scan: ${res.error}`);
+        return;
+      }
+      const src = res.source === "live" ? "live (Bitget + Yahoo)" : "demo";
+      setNote(
+        `Scan logged: ${res.appended} decisions appended (source: ${src}).${res.sourceNote ? " " + res.sourceNote : ""}`,
+      );
       setRefreshKey((k) => k + 1);
     } catch (e) {
       setNote(`Error: ${String(e)}`);
@@ -131,6 +152,7 @@ export default function LedgerView() {
       {note && (
         <p className="rounded-lg border border-cyan-500/30 bg-cyan-500/5 p-2.5 text-sm text-cyan-200">{note}</p>
       )}
+      {error && <ErrorNote message={`Couldn't load the ledger: ${error}`} />}
 
       {/* Summary */}
       {stats && (
@@ -139,20 +161,20 @@ export default function LedgerView() {
           <Stat label="Paper trades" value={stats.totalTrades} sub={`${stats.noTrades} no-trade`} />
           <Stat
             label="Win rate"
-            value={stats.winRate === null ? "—" : `${(stats.winRate * 100).toFixed(1)}%`}
+            value={stats.winRate === null ? "—" : `${(stats.winRate * 100).toFixed(0)}%`}
             sub={`${stats.wins}W / ${stats.losses}L`}
           />
           <Stat
-            label="Avg return"
+            label="Avg return / trade"
             value={pctStr(stats.avgReturnPct)}
             valueClass={(stats.avgReturnPct ?? 0) >= 0 ? "text-emerald-300" : "text-rose-300"}
           />
           <Stat
-            label="Total PnL"
+            label="Total PnL (portfolio)"
             value={pctStr(stats.totalPnlValue)}
             valueClass={stats.totalPnlValue >= 0 ? "text-emerald-300" : "text-rose-300"}
           />
-          <Stat label="Max drawdown" value={`${stats.maxDrawdownPct.toFixed(2)}%`} />
+          <Stat label="Max drawdown (portfolio)" value={`${stats.maxDrawdownPct.toFixed(2)}%`} />
         </div>
       )}
 

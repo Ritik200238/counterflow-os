@@ -57,7 +57,12 @@ export default function AgentConsole() {
       fetch(`/api/agent/tick?source=${live ? "live" : "sim"}`)
         .then((r) => r.json())
         .then((res) => {
-          if (!alive || res.error) return;
+          if (!alive) return;
+          if (res.error) {
+            push([{ level: "warn", text: `scan failed: ${res.error}` }]);
+            setLastRun(new Date().toLocaleTimeString());
+            return;
+          }
           const t = res.tick as AgentTick;
           const decisions = res.decisions as Row[];
           setTick(t);
@@ -84,7 +89,9 @@ export default function AgentConsole() {
             ...t.alerts.map((a) => ({ level: a.level, text: a.text })),
           ]);
         })
-        .catch(() => {});
+        .catch((e) => {
+          if (alive) push([{ level: "warn", text: `scan request failed: ${String(e)}` }]);
+        });
     };
 
     run();
@@ -101,8 +108,9 @@ export default function AgentConsole() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Autonomous Agent</h1>
           <p className="mt-1 max-w-2xl text-sm text-muted">
-            CounterFlow runs on its own — scanning the market every {INTERVAL_MS / 1000}s, routing
-            strategies, and surfacing signals. Paper / simulation, not financial advice.
+            While this page is open, the agent scans every {INTERVAL_MS / 1000}s, routes strategies,
+            and streams signals. (Headless server-side autonomy runs on a daily schedule.) Paper /
+            simulation, not financial advice.
           </p>
         </div>
         <div className="flex items-center gap-2">

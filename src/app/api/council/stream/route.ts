@@ -17,13 +17,15 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export async function GET(req: NextRequest) {
   const asset = (req.nextUrl.searchParams.get("asset") ?? "NVDAx") as AssetSymbol;
-  const source = req.nextUrl.searchParams.get("source") === "live" ? "live" : "sim";
+  const wantLive = req.nextUrl.searchParams.get("source") === "live";
+  let source: "live" | "sim" = wantLive ? "live" : "sim";
 
   let board;
   try {
-    board = source === "live" ? await getLiveBoard(Date.now()) : generateBoard();
+    board = wantLive ? await getLiveBoard(Date.now()) : generateBoard();
   } catch {
     board = generateBoard();
+    source = "sim"; // live feed failed — fell back to demo
   }
   const md = board.find((m) => m.meta.symbol === asset);
   if (!md) {
@@ -47,7 +49,7 @@ export async function GET(req: NextRequest) {
   const stream = new ReadableStream({
     async start(controller) {
       const send = (obj: unknown) => controller.enqueue(enc.encode(`data: ${JSON.stringify(obj)}\n\n`));
-      send({ type: "meta", asset, regime: sig.regime.regime, regimeConfidence: sig.regime.confidence });
+      send({ type: "meta", asset, source, regime: sig.regime.regime, regimeConfidence: sig.regime.confidence });
       for (const a of agents) {
         send({ type: "agent", agent: a });
         await sleep(450);

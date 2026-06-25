@@ -108,3 +108,12 @@ export function Spinner({ label = "Loading…" }: { label?: string }) {
     </div>
   );
 }
+
+/** Consistent inline error message for a failed fetch/action. */
+export function ErrorNote({ message }: { message: string }) {
+  return (
+    <p className="rounded-lg border border-rose-500/40 bg-rose-500/10 p-3 text-sm text-rose-300">
+      {message}
+    </p>
+  );
+}

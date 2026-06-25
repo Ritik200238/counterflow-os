@@ -69,7 +69,7 @@ export default function PriceChart({
         <div>
           {gapPct !== null && (
             <span className={gapPct >= 0 ? "text-rose-300" : "text-emerald-300"}>
-              live gap {gapPct >= 0 ? "+" : ""}{gapPct.toFixed(2)}%
+              {source === "live" ? "live gap" : "gap"} {gapPct >= 0 ? "+" : ""}{gapPct.toFixed(2)}%
             </span>
           )}
           <span className="ml-2">· {source === "live" ? "live (Bitget + Yahoo)" : "demo"} · ~72h</span>
