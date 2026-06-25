@@ -9,7 +9,7 @@ CounterFlow OS is an autonomous **strategy-routing and proof layer** for 24/7 to
 
 **🔗 Live demo: [counterflow-os.vercel.app](https://counterflow-os.vercel.app)** · **Repo: [github.com/Ritik200238/counterflow-os](https://github.com/Ritik200238/counterflow-os)**
 
-> **⚡ Live mode is real.** Toggle "Live" on the board to pull **real tokenized-stock prices from Bitget** (`RNVDAUSDT`, `RTSLAUSDT`, `RAAPLUSDT`, `RCOINUSDT`, `RHOODUSDT`) and **real underlying equity prices from Yahoo Finance** — the fair-value gaps you see are *actual* tokenized-vs-underlying tracking errors, and the spread is the real Bitget order-book spread. Toggle "Demo" for the reproducible six-regime narrative.
+> **⚡ Live mode is real.** Toggle "Live" on the board to pull **real tokenized-stock prices from Bitget** (`RNVDAUSDT`, `RTSLAUSDT`, `RAAPLUSDT`, `RCOINUSDT`, `RHOODUSDT`) and **real underlying equity prices from Yahoo Finance** — the fair-value gaps you see are *actual* tokenized-vs-underlying tracking errors, and the spread is the real Bitget order-book spread. Each asset page charts the **token (24/7, continuous) against the underlying (market-hours only)** — the gap *is* the tracking error, and the underlying's session breaks show the 24/7 wedge. Toggle "Demo" for the reproducible six-regime narrative.
 
 ![Dashboard](docs/screenshots/dashboard.png)
 

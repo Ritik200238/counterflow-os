@@ -446,3 +446,28 @@ export function generateBoard(
     return buildAssetData(symbol, spec, timestamp, rng);
   });
 }
+
+/** Synthetic recent (72h hourly) price history for demo mode — a backward walk
+ *  ending at the current values. Underlying only during US market hours, so the
+ *  24/7-vs-limited-hours wedge shows up the same way it does in live mode. */
+export function simPriceHistory(
+  symbol: AssetSymbol,
+  endTimeIso: string,
+  currentToken: number,
+  currentUnderlying: number,
+): { token: { t: number; price: number }[]; underlying: { t: number; price: number }[] } {
+  const rng = mulberry32(hashSeed(`hist:${symbol}:${endTimeIso}`));
+  const end = new Date(endTimeIso).getTime();
+  const token: { t: number; price: number }[] = [];
+  const underlying: { t: number; price: number }[] = [];
+  let tok = currentToken;
+  let ul = currentUnderlying;
+  for (let i = 0; i < 72; i++) {
+    const t = end - i * 3_600_000;
+    token.unshift({ t, price: round(tok, 2) });
+    if (isUsMarketOpen(new Date(t))) underlying.unshift({ t, price: round(ul, 2) });
+    tok = tok * (1 + rngGauss(rng, 0, 0.004));
+    ul = ul * (1 + rngGauss(rng, 0, 0.003));
+  }
+  return { token, underlying };
+}

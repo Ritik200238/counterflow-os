@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { BoardResult, ScanOutcome } from "@/lib/pipeline";
 import { Panel, SectionTitle, Badge, Bar, Stat, KeyVal, Spinner } from "@/components/ui";
 import StreamingCouncil from "@/components/StreamingCouncil";
+import PriceChart from "@/components/PriceChart";
 import {
   actionColor,
   actionLabel,
@@ -26,6 +27,7 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
   const [source, setSource] = useState<"sim" | "live">("sim");
   const [error, setError] = useState<string | null>(null);
   const [showJson, setShowJson] = useState(false);
+  const [history, setHistory] = useState<{ token: { t: number; price: number }[]; underlying: { t: number; price: number }[]; source: "live" | "sim" } | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -49,6 +51,19 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
       active = false;
     };
   }, [symbol, llm, source]);
+
+  useEffect(() => {
+    let active = true;
+    fetch(`/api/history?asset=${symbol}&source=${source}`)
+      .then((r) => r.json())
+      .then((h) => {
+        if (active && !h.error) setHistory(h);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [symbol, source]);
 
   function switchSource(s: "sim" | "live") {
     if (s !== source) {
@@ -114,6 +129,19 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
       {/* Rationale */}
       <Panel className="glow-cyan">
         <p className="text-sm leading-relaxed text-slate-200">{p.rationale}</p>
+      </Panel>
+
+      {/* Price vs underlying */}
+      <Panel>
+        <SectionTitle
+          title="Price vs Underlying"
+          hint="Token trades 24/7; underlying only in market hours — the gap is the tracking error"
+        />
+        {history ? (
+          <PriceChart token={history.token} underlying={history.underlying} source={history.source} />
+        ) : (
+          <Spinner label="Loading price history…" />
+        )}
       </Panel>
 
       {/* Scores + price */}

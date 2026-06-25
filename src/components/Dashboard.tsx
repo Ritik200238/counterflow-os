@@ -66,16 +66,39 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       {/* Hero */}
-      <div className="flex flex-col gap-2">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Trade the regime, not the signal.
-        </h1>
-        <p className="max-w-3xl text-sm text-muted">
-          CounterFlow OS reads the market, detects the regime, routes to the best
-          strategy, debates it across a multi-agent council, risk-checks the trade,
-          and writes an auditable proof packet for every decision — across 24/7
-          tokenized US stocks.
-        </p>
+      <div className="space-y-4">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl font-semibold tracking-tight">Trade the regime, not the signal.</h1>
+          <p className="max-w-3xl text-sm text-muted">
+            CounterFlow OS is an autonomous <span className="text-slate-200">strategy-routing &amp; proof layer</span>{" "}
+            for 24/7 tokenized US stocks. It detects the regime, routes the best of seven strategies,
+            debates it across an eight-agent council, risk-checks it, and writes an auditable proof
+            packet for every decision.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2 text-xs">
+          {["6 regimes", "7 strategies", "8-agent council", "live Bitget + Yahoo data", "auditable proof packet"].map(
+            (chip) => (
+              <span key={chip} className="rounded-full border hairline bg-white/5 px-2.5 py-1 text-slate-300">
+                {chip}
+              </span>
+            ),
+          )}
+        </div>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {[
+            ["01", "Detect regime", "6 regimes from real signals"],
+            ["02", "Route strategy", "best of 7, rejected reasons logged"],
+            ["03", "Council debate", "8 agents + agreement"],
+            ["04", "Risk + proof", "governor + Decision Packet"],
+          ].map(([n, t, d]) => (
+            <div key={n} className="rounded-xl border hairline bg-black/20 p-3">
+              <div className="mono text-xs text-cyan-300">{n}</div>
+              <div className="mt-0.5 text-sm font-medium text-slate-200">{t}</div>
+              <div className="text-xs text-muted">{d}</div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Agent Crowding Index */}

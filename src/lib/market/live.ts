@@ -217,6 +217,56 @@ function buildSnapshot(
   };
 }
 
+export interface PricePt {
+  t: number; // epoch ms
+  price: number;
+}
+
+export interface PriceHistory {
+  token: PricePt[];
+  underlying: PricePt[];
+  source: "live" | "sim";
+}
+
+/** Real recent price history: token (Bitget candles, 24/7) + underlying (Yahoo
+ *  intraday, market-hours only). The gap between them IS the tracking error, and
+ *  the underlying's session gaps show the 24/7-vs-limited-hours wedge. */
+export async function getPriceHistory(symbol: AssetSymbol): Promise<PriceHistory> {
+  const map = LIVE_MAP[symbol];
+
+  const [tokRes, ulRes] = await Promise.all([
+    fetchJson<{ data: string[][] }>(
+      `${BITGET_BASE}/candles?symbol=${map.bitget}&granularity=1h&limit=72`,
+    ).catch(() => ({ data: [] as string[][] })),
+    fetchJson<{
+      chart: { result: { timestamp: number[]; indicators: { quote: { close: (number | null)[] }[] } }[] };
+    }>(`${YAHOO_BASE}/${encodeURIComponent(map.yahoo)}?interval=1h&range=5d`).catch(() => null),
+  ]);
+
+  const token: PricePt[] = (tokRes.data ?? [])
+    .map((r) => ({ t: Number(r[0]), price: Number(r[4]) }))
+    .filter((p) => p.price > 0 && Number.isFinite(p.t))
+    .sort((a, b) => a.t - b.t);
+
+  let underlying: PricePt[] = [];
+  const r = ulRes?.chart?.result?.[0];
+  if (r?.timestamp && r.indicators?.quote?.[0]?.close) {
+    const ts = r.timestamp;
+    const cl = r.indicators.quote[0].close;
+    underlying = ts
+      .map((t, i) => ({ t: t * 1000, price: cl[i] ?? 0 }))
+      .filter((p) => p.price > 0);
+  }
+
+  // Clip the underlying to the token's recent window so both overlap.
+  if (token.length > 0) {
+    const minT = token[0].t;
+    underlying = underlying.filter((p) => p.t >= minT);
+  }
+
+  return { token, underlying, source: "live" };
+}
+
 let cache: { at: number; board: AssetMarketData[] } | null = null;
 const CACHE_MS = 60_000;
 
