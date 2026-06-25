@@ -1,6 +1,7 @@
 import { scanBoard } from "@/lib/pipeline";
 import { appendLedger, readLedger } from "@/lib/ledger/store";
 import { computeLedgerStats } from "@/lib/memory";
+import { rateLimited } from "@/lib/util/rateLimit";
 
 // Run a live LLM-enriched scan, resolve the paper trades, and append every
 // decision to the ledger. This is the "execute paper trades" action (PRD §8.1).
@@ -8,7 +9,9 @@ import { computeLedgerStats } from "@/lib/memory";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-export async function POST() {
+export async function POST(req: Request) {
+  const limited = rateLimited(req, 8);
+  if (limited) return limited;
   try {
     const existing = await readLedger();
     const board = await scanBoard({ useLLM: true, startSeq: existing.length + 1 });

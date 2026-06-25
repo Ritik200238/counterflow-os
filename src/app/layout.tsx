@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -58,6 +60,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <footer className="mx-auto max-w-7xl px-5 py-8 text-xs text-muted">
           CounterFlow OS · paper-trading simulation · every decision is logged and reproducible · not financial advice.
         </footer>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

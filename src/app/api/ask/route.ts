@@ -1,5 +1,6 @@
 import { scanBoard } from "@/lib/pipeline";
 import { answerQuestion } from "@/lib/agent/ask";
+import { rateLimited } from "@/lib/util/rateLimit";
 
 // "Ask CounterFlow" — natural-language agent endpoint. Grounds every answer in
 // the live engine board. POST { question, source?, llm? }.
@@ -8,6 +9,8 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
+  const limited = rateLimited(req, 15);
+  if (limited) return limited;
   try {
     const body = await req.json().catch(() => ({}));
     const question = String(body?.question ?? "").trim().slice(0, 500);
