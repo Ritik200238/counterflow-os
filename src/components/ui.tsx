@@ -25,10 +25,8 @@ export function SectionTitle({
   return (
     <div className="mb-3 flex items-center justify-between gap-3">
       <div>
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-300">
-          {title}
-        </h2>
-        {hint && <p className="mt-0.5 text-xs text-muted">{hint}</p>}
+        <h2 className="text-sm font-semibold tracking-tight text-ink">{title}</h2>
+        {hint && <p className="mt-0.5 text-xs text-muted2">{hint}</p>}
       </div>
       {right}
     </div>
@@ -44,7 +42,7 @@ export function Badge({
 }) {
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${className}`}
+      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium ${className}`}
     >
       {children}
     </span>
@@ -63,10 +61,10 @@ export function Stat({
   valueClass?: string;
 }) {
   return (
-    <div className="rounded-xl border hairline bg-black/20 p-3">
+    <div className="rounded-xl border hairline bg-[#FAFAF9] p-3">
       <div className="text-[11px] uppercase tracking-wider text-muted">{label}</div>
-      <div className={`mono mt-1 text-lg font-semibold ${valueClass}`}>{value}</div>
-      {sub && <div className="mt-0.5 text-xs text-muted">{sub}</div>}
+      <div className={`mono mt-1 text-lg font-semibold text-ink ${valueClass}`}>{value}</div>
+      {sub && <div className="mt-0.5 text-xs text-muted2">{sub}</div>}
     </div>
   );
 }
@@ -75,7 +73,7 @@ export function Stat({
 export function Bar({
   value,
   max = 1,
-  className = "bg-cyan-400",
+  className = "bg-ink",
   height = "h-1.5",
 }: {
   value: number;
@@ -85,7 +83,7 @@ export function Bar({
 }) {
   const pct = Math.max(0, Math.min(100, (value / max) * 100));
   return (
-    <div className={`w-full overflow-hidden rounded-full bg-white/10 ${height}`}>
+    <div className={`w-full overflow-hidden rounded-full bg-[#ECECE8] ${height}`}>
       <div className={`${height} rounded-full ${className}`} style={{ width: `${pct}%` }} />
     </div>
   );
@@ -94,16 +92,16 @@ export function Bar({
 export function KeyVal({ k, v }: { k: string; v: ReactNode }) {
   return (
     <div className="flex items-center justify-between gap-3 border-b hairline py-1.5 text-sm last:border-0">
-      <span className="text-muted">{k}</span>
-      <span className="mono text-right text-slate-200">{v}</span>
+      <span className="text-muted2">{k}</span>
+      <span className="mono text-right text-ink">{v}</span>
     </div>
   );
 }
 
 export function Spinner({ label = "Loading…" }: { label?: string }) {
   return (
-    <div className="flex items-center gap-3 py-10 text-sm text-muted">
-      <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-cyan-400 border-t-transparent" />
+    <div className="flex items-center gap-3 py-10 text-sm text-muted2">
+      <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-[#E6E6E2] border-t-ink" />
       {label}
     </div>
   );
@@ -112,7 +110,7 @@ export function Spinner({ label = "Loading…" }: { label?: string }) {
 /** Consistent inline error message for a failed fetch/action. */
 export function ErrorNote({ message }: { message: string }) {
   return (
-    <p className="rounded-lg border border-rose-500/40 bg-rose-500/10 p-3 text-sm text-rose-300">
+    <p className="rounded-lg border border-[#E6C3BF] bg-[#FBF1F0] p-3 text-sm text-[#A83A31]">
       {message}
     </p>
   );

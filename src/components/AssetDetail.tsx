@@ -91,8 +91,8 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
   if (error)
     return (
       <Panel>
-        <p className="text-rose-300">{error}</p>
-        <Link href="/" className="mt-3 inline-block text-sm text-cyan-300 hover:text-cyan-200">
+        <p className="text-neg">{error}</p>
+        <Link href="/" className="mt-3 inline-block text-sm text-info hover:text-ink">
           ← Back to dashboard
         </Link>
       </Panel>
@@ -107,20 +107,20 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <Link href="/" className="text-sm text-muted hover:text-white">
+        <Link href="/" className="text-sm text-muted hover:text-ink">
           ← Dashboard
         </Link>
         <div className="flex items-center gap-3">
           <div className="flex overflow-hidden rounded-lg border hairline text-xs">
             <button
               onClick={() => switchSource("sim")}
-              className={`px-3 py-1 ${source === "sim" ? "bg-cyan-500/20 text-cyan-200" : "text-muted hover:bg-white/5"}`}
+              className={`px-3 py-1 ${source === "sim" ? "bg-[#E8E7E1] text-ink" : "text-muted hover:bg-[#F4F3EF]"}`}
             >
               Demo
             </button>
             <button
               onClick={() => switchSource("live")}
-              className={`px-3 py-1 ${source === "live" ? "bg-emerald-500/20 text-emerald-200" : "text-muted hover:bg-white/5"}`}
+              className={`px-3 py-1 ${source === "live" ? "bg-pos/15 text-pos-ink" : "text-muted hover:bg-[#F4F3EF]"}`}
             >
               ⚡ Live
             </button>
@@ -134,7 +134,7 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
                 setLoading(true);
                 setLlm(e.target.checked);
               }}
-              className="accent-cyan-400"
+              className="accent-[#1F8A5B]"
             />
             AI debate (Qwen)
           </label>
@@ -153,14 +153,14 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
       </div>
 
       {liveFellBack && (
-        <p className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-2.5 text-xs text-amber-300">
+        <p className="rounded-lg border border-warn/25 bg-warn/10 p-2.5 text-xs text-warn">
           Live feed unavailable — showing the seeded demo. {sourceNote ?? ""}
         </p>
       )}
 
       {/* Rationale */}
       <Panel className="glow-cyan">
-        <p className="text-sm leading-relaxed text-slate-200">{p.rationale}</p>
+        <p className="text-sm leading-relaxed text-ink">{p.rationale}</p>
       </Panel>
 
       {/* Price vs underlying */}
@@ -186,7 +186,7 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
           <KeyVal k="Estimated fair value" v={`$${p.market.estimatedFairValue.toFixed(2)}`} />
           <KeyVal
             k="Fair-value gap"
-            v={<span className={p.scores.fairValueGapPct >= 0 ? "text-rose-300" : "text-emerald-300"}>{pctStr(p.scores.fairValueGapPct)}</span>}
+            v={<span className={p.scores.fairValueGapPct >= 0 ? "text-neg" : "text-pos-ink"}>{pctStr(p.scores.fairValueGapPct)}</span>}
           />
           <KeyVal k="Underlying" v={`$${p.market.underlyingPrice.toFixed(2)}`} />
           <KeyVal k="Underlying market" v={p.market.underlyingMarketOpen ? "Open" : "Closed (24/7 token)"} />
@@ -199,28 +199,28 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
             <Stat
               label="CrowdScore"
               value={<span className={crowdColor(p.scores.crowdScore)}>{p.scores.crowdScore}</span>}
-              sub={<Bar value={p.scores.crowdScore} max={100} className="bg-rose-400 mt-1" />}
+              sub={<Bar value={p.scores.crowdScore} max={100} className="bg-neg mt-1" />}
             />
             <Stat label="Fair-Value Gap" value={pctStr(p.scores.fairValueGapPct)} />
             <Stat
               label="Regime Conf."
               value={`${(p.scores.regimeConfidence * 100).toFixed(0)}%`}
-              sub={<Bar value={p.scores.regimeConfidence} className="bg-cyan-400 mt-1" />}
+              sub={<Bar value={p.scores.regimeConfidence} className="bg-info mt-1" />}
             />
             <Stat
               label="Strategy Conf."
               value={`${(p.scores.strategyConfidence * 100).toFixed(0)}%`}
-              sub={<Bar value={p.scores.strategyConfidence} className="bg-emerald-400 mt-1" />}
+              sub={<Bar value={p.scores.strategyConfidence} className="bg-pos mt-1" />}
             />
             <Stat
               label="Liquidity"
               value={p.scores.liquidityScore.toFixed(2)}
-              sub={<Bar value={p.scores.liquidityScore} className="bg-sky-400 mt-1" />}
+              sub={<Bar value={p.scores.liquidityScore} className="bg-info mt-1" />}
             />
             <Stat
               label="Risk"
               value={p.scores.riskScore.toFixed(2)}
-              sub={<Bar value={p.scores.riskScore} className="bg-amber-400 mt-1" />}
+              sub={<Bar value={p.scores.riskScore} className="bg-warn mt-1" />}
             />
           </div>
         </Panel>
@@ -232,7 +232,7 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
           title="Multi-Agent Strategy Council"
           hint={`Agreement ${p.agentAgreement.agree}/${p.agentAgreement.total}`}
           right={
-            <Badge className="border-slate-500/40 bg-slate-500/10 text-slate-300">
+            <Badge className="border-line2 bg-[#F2F2EF] text-ink2">
               {p.reasoningSource === "qwen" ? `Qwen ${p.reasoningModel}` : "deterministic"}
             </Badge>
           }
@@ -244,23 +244,23 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
           {p.council.map((a, i) => (
             <div
               key={a.agent}
-              className="cf-reveal rounded-xl border hairline bg-black/20 p-3"
+              className="cf-reveal rounded-xl border hairline bg-[#FAFAF9] p-3"
               style={{ animationDelay: `${i * 90}ms` }}
             >
               <div className="flex items-center justify-between">
                 <span className={`text-sm font-semibold ${agentColor(a.agent)}`}>{a.agent}</span>
-                <Badge className="border-slate-500/40 bg-slate-500/10 text-slate-300">
+                <Badge className="border-line2 bg-[#F2F2EF] text-ink2">
                   {stanceLabel(a.vote.stance)} · {(a.vote.confidence * 100).toFixed(0)}%
                 </Badge>
               </div>
-              <p className="mt-1.5 text-xs leading-relaxed text-slate-300">{a.summary}</p>
+              <p className="mt-1.5 text-xs leading-relaxed text-ink2">{a.summary}</p>
             </div>
           ))}
         </div>
 
-        <div className="mt-4 rounded-xl border hairline bg-black/30 p-4">
+        <div className="mt-4 rounded-xl border hairline bg-[#F7F7F5] p-4">
           <div className="mb-1 text-xs uppercase tracking-wider text-muted">Debate narrative</div>
-          <pre className="mono whitespace-pre-wrap text-xs leading-relaxed text-slate-300">{p.debate}</pre>
+          <pre className="mono whitespace-pre-wrap text-xs leading-relaxed text-ink2">{p.debate}</pre>
         </div>
       </Panel>
 
@@ -278,10 +278,10 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
           <KeyVal k="Data freshness" v={p.dataFreshness} />
           <div className="mt-3 space-y-1">
             {p.risk.reasons.map((r, i) => (
-              <p key={i} className="text-xs text-slate-400">• {r}</p>
+              <p key={i} className="text-xs text-muted2">• {r}</p>
             ))}
             {p.risk.blocks.map((b, i) => (
-              <p key={`b${i}`} className="text-xs text-rose-300">⛔ {b}</p>
+              <p key={`b${i}`} className="text-xs text-neg">⛔ {b}</p>
             ))}
           </div>
         </Panel>
@@ -298,7 +298,7 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
               <KeyVal k="Entry → Exit" v={`$${led.entryPrice?.toFixed(2)} → $${led.exitPrice?.toFixed(2)}`} />
               <KeyVal
                 k="Paper PnL"
-                v={<span className={(led.pnlPct ?? 0) >= 0 ? "text-emerald-300" : "text-rose-300"}>{pctStr(led.pnlPct)}</span>}
+                v={<span className={(led.pnlPct ?? 0) >= 0 ? "text-pos-ink" : "text-neg"}>{pctStr(led.pnlPct)}</span>}
               />
               <KeyVal k="Exit reason" v={led.exitReason.replace("_", " ")} />
             </>
@@ -308,7 +308,7 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
             {p.rejectedStrategies.map((r) => (
               <div key={r.strategy} className="text-xs">
                 <span className={`font-medium ${strategyColor(r.strategy)}`}>{strategyShort(r.strategy)}</span>
-                <span className="text-slate-400"> — {r.reason}</span>
+                <span className="text-muted2"> — {r.reason}</span>
               </div>
             ))}
           </div>
@@ -332,12 +332,12 @@ export default function AssetDetail({ symbol }: { symbol: string }) {
       <Panel>
         <button
           onClick={() => setShowJson((v) => !v)}
-          className="text-sm font-medium text-cyan-300 hover:text-cyan-200"
+          className="text-sm font-medium text-info hover:text-ink"
         >
           {showJson ? "▾ Hide" : "▸ Show"} raw Trade Decision Packet (JSON)
         </button>
         {showJson && (
-          <pre className="mono mt-3 max-h-[480px] overflow-auto rounded-lg border hairline bg-black/40 p-4 text-xs leading-relaxed text-slate-300">
+          <pre className="mono mt-3 max-h-[480px] overflow-auto rounded-lg border hairline bg-[#F7F7F5] p-4 text-xs leading-relaxed text-ink2">
             {JSON.stringify(p, null, 2)}
           </pre>
         )}

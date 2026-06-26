@@ -16,7 +16,7 @@ function AuthInner() {
   if (isSignedIn) return <UserButton />;
   return (
     <SignInButton mode="modal">
-      <button className="rounded-md border hairline bg-white/5 px-3 py-1.5 text-sm text-slate-200 hover:bg-white/10">
+      <button className="rounded-md border hairline bg-[#F7F7F5] px-3 py-1.5 text-sm text-ink hover:bg-[#EFEEE9]">
         Sign in
       </button>
     </SignInButton>

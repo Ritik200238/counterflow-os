@@ -26,10 +26,10 @@ interface LogLine {
 }
 
 const levelColor: Record<LogLine["level"], string> = {
-  signal: "text-emerald-300",
-  warn: "text-amber-300",
-  info: "text-slate-400",
-  tick: "text-cyan-300",
+  signal: "text-pos-ink",
+  warn: "text-warn",
+  info: "text-muted2",
+  tick: "text-info",
 };
 
 export default function AgentConsole() {
@@ -117,13 +117,13 @@ export default function AgentConsole() {
           <div className="flex overflow-hidden rounded-lg border hairline text-xs">
             <button
               onClick={() => setLive(false)}
-              className={`px-3 py-1 ${!live ? "bg-cyan-500/20 text-cyan-200" : "text-muted hover:bg-white/5"}`}
+              className={`px-3 py-1 ${!live ? "bg-[#E8E7E1] text-ink" : "text-muted hover:bg-[#F4F3EF]"}`}
             >
               Demo
             </button>
             <button
               onClick={() => setLive(true)}
-              className={`px-3 py-1 ${live ? "bg-emerald-500/20 text-emerald-200" : "text-muted hover:bg-white/5"}`}
+              className={`px-3 py-1 ${live ? "bg-pos/15 text-pos-ink" : "text-muted hover:bg-[#F4F3EF]"}`}
             >
               ⚡ Live
             </button>
@@ -132,8 +132,8 @@ export default function AgentConsole() {
             onClick={() => setRunning((r) => !r)}
             className={`rounded-lg border px-3 py-1.5 text-sm font-medium ${
               running
-                ? "border-rose-500/40 bg-rose-500/10 text-rose-200 hover:bg-rose-500/20"
-                : "border-emerald-500/40 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20"
+                ? "border-neg/25 bg-neg/10 text-neg hover:bg-neg/15"
+                : "border-pos/25 bg-pos/10 text-pos-ink hover:bg-pos/15"
             }`}
           >
             {running ? "❚❚ Pause" : "▶ Resume"}
@@ -146,7 +146,7 @@ export default function AgentConsole() {
         <div className="flex flex-wrap items-center gap-4">
           <span className="flex items-center gap-2 text-sm">
             <span
-              className={`inline-block h-2.5 w-2.5 rounded-full ${running ? "animate-pulse bg-emerald-400" : "bg-slate-500"}`}
+              className={`inline-block h-2.5 w-2.5 rounded-full ${running ? "animate-pulse bg-pos" : "bg-muted"}`}
             />
             {running ? "Running" : "Paused"}
           </span>
@@ -197,7 +197,7 @@ export default function AgentConsole() {
                 {rows.map((d) => (
                   <tr key={d.asset} className="border-b hairline last:border-0">
                     <td className="py-2 pr-2">
-                      <Link href={`/asset/${d.asset}`} className="font-medium hover:text-cyan-300">
+                      <Link href={`/asset/${d.asset}`} className="font-medium hover:text-info">
                         {d.asset}
                       </Link>
                     </td>

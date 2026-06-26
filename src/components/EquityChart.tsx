@@ -23,19 +23,19 @@ export default function EquityChart({ series }: { series: number[] }) {
   const area = `${line} L${x(series.length - 1).toFixed(1)},${zeroY.toFixed(1)} L${x(0).toFixed(1)},${zeroY.toFixed(1)} Z`;
   const last = series[series.length - 1];
   const positive = last >= 0;
-  const stroke = positive ? "#34d399" : "#fb7185";
-  const fill = positive ? "rgba(52,211,153,0.12)" : "rgba(251,113,133,0.12)";
+  const stroke = positive ? "#1F8A5B" : "#C8453B";
+  const fill = positive ? "rgba(31,138,91,0.09)" : "rgba(200,69,59,0.09)";
 
   return (
     <div className="w-full">
       <svg viewBox={`0 0 ${W} ${H}`} className="h-44 w-full" preserveAspectRatio="none">
-        <line x1={pad} x2={W - pad} y1={zeroY} y2={zeroY} stroke="#334155" strokeDasharray="3 3" strokeWidth="1" />
+        <line x1={pad} x2={W - pad} y1={zeroY} y2={zeroY} stroke="#D0D0CA" strokeDasharray="3 3" strokeWidth="1" />
         <path d={area} fill={fill} />
         <path d={line} fill="none" stroke={stroke} strokeWidth="2" strokeLinejoin="round" />
       </svg>
       <div className="mt-1 flex justify-between text-xs text-muted">
         <span>start: 0.00%</span>
-        <span className={positive ? "text-emerald-300" : "text-rose-300"}>
+        <span className={positive ? "text-pos-ink" : "text-neg"}>
           cumulative: {last >= 0 ? "+" : ""}{last.toFixed(2)}%
         </span>
       </div>

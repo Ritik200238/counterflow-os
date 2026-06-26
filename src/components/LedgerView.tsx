@@ -135,14 +135,14 @@ export default function LedgerView() {
           <button
             onClick={runScan}
             disabled={!!busy}
-            className="rounded-lg border border-cyan-500/40 bg-cyan-500/10 px-3 py-1.5 text-sm font-medium text-cyan-200 hover:bg-cyan-500/20 disabled:opacity-50"
+            className="rounded-lg border border-line2 bg-[#F0EFEA] px-3 py-1.5 text-sm font-medium text-ink hover:bg-[#E8E7E1] disabled:opacity-50"
           >
             {busy === "scan" ? "Scanning…" : "Run live scan + log"}
           </button>
           <button
             onClick={runSeed}
             disabled={!!busy}
-            className="rounded-lg border hairline bg-white/5 px-3 py-1.5 text-sm font-medium text-slate-200 hover:bg-white/10 disabled:opacity-50"
+            className="rounded-lg border hairline bg-[#F7F7F5] px-3 py-1.5 text-sm font-medium text-ink hover:bg-[#EFEEE9] disabled:opacity-50"
           >
             {busy === "seed" ? "Running…" : "Run backtest seed"}
           </button>
@@ -150,7 +150,7 @@ export default function LedgerView() {
       </div>
 
       {note && (
-        <p className="rounded-lg border border-cyan-500/30 bg-cyan-500/5 p-2.5 text-sm text-cyan-200">{note}</p>
+        <p className="rounded-lg border border-line bg-[#F4F3EF] p-2.5 text-sm text-ink">{note}</p>
       )}
       {error && <ErrorNote message={`Couldn't load the ledger: ${error}`} />}
 
@@ -167,12 +167,12 @@ export default function LedgerView() {
           <Stat
             label="Avg return / trade"
             value={pctStr(stats.avgReturnPct)}
-            valueClass={(stats.avgReturnPct ?? 0) >= 0 ? "text-emerald-300" : "text-rose-300"}
+            valueClass={(stats.avgReturnPct ?? 0) >= 0 ? "text-pos-ink" : "text-neg"}
           />
           <Stat
             label="Total PnL (portfolio)"
             value={pctStr(stats.totalPnlValue)}
-            valueClass={stats.totalPnlValue >= 0 ? "text-emerald-300" : "text-rose-300"}
+            valueClass={stats.totalPnlValue >= 0 ? "text-pos-ink" : "text-neg"}
           />
           <Stat label="Max drawdown (portfolio)" value={`${stats.maxDrawdownPct.toFixed(2)}%`} />
         </div>
@@ -187,12 +187,12 @@ export default function LedgerView() {
           <Stat
             label="Best trade"
             value={pctStr(stats.bestTradePct)}
-            valueClass="text-emerald-300"
+            valueClass="text-pos-ink"
           />
           <Stat
             label="Worst trade"
             value={pctStr(stats.worstTradePct)}
-            valueClass="text-rose-300"
+            valueClass="text-neg"
           />
         </div>
       )}
@@ -247,7 +247,7 @@ export default function LedgerView() {
                       <div className="flex items-center gap-2">
                         <span className="mono w-9 text-right">{r.currentWeight}%</span>
                         <div className="w-24">
-                          <Bar value={r.currentWeight} max={100} className="bg-cyan-400" />
+                          <Bar value={r.currentWeight} max={100} className="bg-info" />
                         </div>
                       </div>
                     </td>
@@ -273,7 +273,7 @@ export default function LedgerView() {
                   setLoading(true);
                   setAsset(e.target.value);
                 }}
-                className="rounded-lg border hairline bg-black/30 px-2 py-1 text-slate-200"
+                className="rounded-lg border hairline bg-[#F7F7F5] px-2 py-1 text-ink"
               >
                 <option value="">All assets</option>
                 {ASSET_SYMBOLS.map((s) => (
@@ -286,7 +286,7 @@ export default function LedgerView() {
                   setLoading(true);
                   setStrategy(e.target.value);
                 }}
-                className="rounded-lg border hairline bg-black/30 px-2 py-1 text-slate-200"
+                className="rounded-lg border hairline bg-[#F7F7F5] px-2 py-1 text-ink"
               >
                 <option value="">All strategies</option>
                 {STRATEGIES.map((s) => (
@@ -295,7 +295,7 @@ export default function LedgerView() {
               </select>
               <a
                 href={`/api/ledger?format=csv&${exportQuery}`}
-                className="rounded-lg border hairline bg-white/5 px-2.5 py-1 text-slate-200 hover:bg-white/10"
+                className="rounded-lg border hairline bg-[#F7F7F5] px-2.5 py-1 text-ink hover:bg-[#EFEEE9]"
               >
                 CSV
               </a>
@@ -303,7 +303,7 @@ export default function LedgerView() {
                 href={`/api/ledger?${exportQuery}`}
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-lg border hairline bg-white/5 px-2.5 py-1 text-slate-200 hover:bg-white/10"
+                className="rounded-lg border hairline bg-[#F7F7F5] px-2.5 py-1 text-ink hover:bg-[#EFEEE9]"
               >
                 JSON
               </a>
@@ -315,7 +315,7 @@ export default function LedgerView() {
         ) : data && data.entries.length > 0 ? (
           <div className="max-h-[560px] overflow-auto">
             <table className="w-full text-sm">
-              <thead className="sticky top-0 bg-panel">
+              <thead className="sticky top-0 bg-card">
                 <tr className="border-b hairline text-left text-xs uppercase tracking-wider text-muted">
                   <th className="py-2 pr-3 font-medium">Time</th>
                   <th className="py-2 pr-3 font-medium">Asset</th>
@@ -340,7 +340,7 @@ export default function LedgerView() {
                     <td className="mono py-2 pr-3 text-right">{e.positionSizePct ? `${e.positionSizePct}%` : "—"}</td>
                     <td
                       className={`mono py-2 pr-3 text-right ${
-                        e.pnlPct === null ? "text-muted" : e.pnlPct >= 0 ? "text-emerald-300" : "text-rose-300"
+                        e.pnlPct === null ? "text-muted" : e.pnlPct >= 0 ? "text-pos-ink" : "text-neg"
                       }`}
                     >
                       {pctStr(e.pnlPct)}
@@ -355,7 +355,7 @@ export default function LedgerView() {
           </div>
         ) : (
           <div className="py-8 text-sm text-muted">
-            Ledger is empty. Click <span className="text-cyan-300">Run backtest seed</span> to populate it.
+            Ledger is empty. Click <span className="text-info">Run backtest seed</span> to populate it.
           </div>
         )}
       </Panel>

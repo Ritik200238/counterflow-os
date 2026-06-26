@@ -3,22 +3,26 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { BoardResult } from "@/lib/pipeline";
-import { Panel, SectionTitle, Badge, Bar, Spinner } from "@/components/ui";
+import { ASSETS } from "@/lib/market/assets";
+import type { AssetSymbol } from "@/lib/types";
+import { Badge, Spinner, ErrorNote } from "@/components/ui";
+import Sparkline from "@/components/Sparkline";
 import {
   actionColor,
   actionLabel,
   crowdColor,
   pctStr,
   regimeColor,
+  regimeDot,
   strategyColor,
   strategyShort,
 } from "@/lib/ui";
 
-function crowdingBarColor(index: number): string {
-  if (index >= 75) return "bg-rose-400";
-  if (index >= 55) return "bg-amber-400";
-  if (index >= 30) return "bg-cyan-400";
-  return "bg-emerald-400";
+function crowdingPill(index: number): string {
+  if (index >= 75) return "text-neg border-neg/25 bg-neg/10";
+  if (index >= 55) return "text-warn border-warn/25 bg-warn/10";
+  if (index >= 30) return "text-info border-info/25 bg-info/10";
+  return "text-pos-ink border-pos/25 bg-pos/10";
 }
 
 export default function Dashboard() {
@@ -27,11 +31,10 @@ export default function Dashboard() {
   const [llm, setLlm] = useState(false);
   const [source, setSource] = useState<"sim" | "live">("sim");
   const [error, setError] = useState<string | null>(null);
+  const [sparks, setSparks] = useState<Record<string, number[]>>({});
 
   useEffect(() => {
     let active = true;
-    // No synchronous setState here — loading starts true on mount and is set true
-    // by the toggle handlers on refetch; all state updates happen post-await.
     const params = new URLSearchParams();
     if (llm) params.set("llm", "1");
     if (source === "live") params.set("source", "live");
@@ -52,6 +55,24 @@ export default function Dashboard() {
     };
   }, [llm, source]);
 
+  // Real recent price sparklines for each card (token series from /api/history).
+  useEffect(() => {
+    if (!data) return;
+    let active = true;
+    const syms = data.decisions.map((d) => d.packet.asset);
+    Promise.all(
+      syms.map((s) =>
+        fetch(`/api/history?asset=${s}&source=${source}`)
+          .then((r) => r.json())
+          .then((h) => [s, ((h.token as { price: number }[]) ?? []).map((p) => p.price)] as const)
+          .catch(() => [s, [] as number[]] as const),
+      ),
+    ).then((pairs) => active && setSparks(Object.fromEntries(pairs)));
+    return () => {
+      active = false;
+    };
+  }, [data, source]);
+
   function switchSource(s: "sim" | "live") {
     if (s !== source) {
       setLoading(true);
@@ -60,222 +81,204 @@ export default function Dashboard() {
   }
 
   const ci = data?.crowdingIndex;
-  const marketClosed =
-    data && !data.decisions[0]?.packet.market.underlyingMarketOpen;
+  const actionable = data ? data.decisions.filter((d) => d.packet.finalAction !== "no_trade").length : 0;
+  const noTrade = data ? data.decisions.length - actionable : 0;
 
   return (
     <div className="space-y-6">
-      {/* Hero */}
-      <div className="space-y-4">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-semibold tracking-tight">Trade the regime, not the signal.</h1>
-          <p className="max-w-3xl text-sm text-muted">
-            CounterFlow OS is an autonomous <span className="text-slate-200">strategy-routing &amp; proof layer</span>{" "}
-            for 24/7 tokenized US stocks. It detects the regime, routes the best of seven strategies,
-            debates it across an eight-agent council, risk-checks it, and writes an auditable proof
-            packet for every decision.
+      {/* Header + controls */}
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-[28px] font-semibold tracking-tight text-ink">Market board</h1>
+          <p className="mt-1.5 max-w-2xl text-sm text-muted2">
+            Trade the regime, not the signal. The router reads all five tokenized names, picks a
+            strategy per regime, and records every decision — including the decisions not to trade.
           </p>
-        </div>
-        <div className="flex flex-wrap gap-2 text-xs">
-          {["6 regimes", "7 strategies", "8-agent council", "live Bitget + Yahoo data", "auditable proof packet"].map(
-            (chip) => (
-              <span key={chip} className="rounded-full border hairline bg-white/5 px-2.5 py-1 text-slate-300">
-                {chip}
-              </span>
-            ),
+          {data && (
+            <p className="mt-2 text-xs text-muted">
+              {source === "live" ? "Live" : "Demo"} · {actionable} actionable · {noTrade} no-trade
+            </p>
           )}
         </div>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {[
-            ["01", "Detect regime", "6 regimes from real signals"],
-            ["02", "Route strategy", "best of 7, rejected reasons logged"],
-            ["03", "Council debate", "8 agents + agreement"],
-            ["04", "Risk + proof", "governor + Decision Packet"],
-          ].map(([n, t, d]) => (
-            <div key={n} className="rounded-xl border hairline bg-black/20 p-3">
-              <div className="mono text-xs text-cyan-300">{n}</div>
-              <div className="mt-0.5 text-sm font-medium text-slate-200">{t}</div>
-              <div className="text-xs text-muted">{d}</div>
-            </div>
-          ))}
+        <div className="flex items-center gap-3">
+          <label className="flex cursor-pointer items-center gap-2 text-xs text-muted2">
+            <input
+              type="checkbox"
+              checked={llm}
+              onChange={(e) => {
+                setLoading(true);
+                setLlm(e.target.checked);
+              }}
+              className="accent-[#1F8A5B]"
+            />
+            Reasoning
+          </label>
+          <div className="flex gap-0.5 rounded-lg border hairline bg-[#F0EFEA] p-0.5 text-xs">
+            <button
+              onClick={() => switchSource("sim")}
+              className={`rounded-md px-3 py-1 transition-colors ${source === "sim" ? "bg-card font-medium text-ink shadow-sm" : "text-muted2 hover:text-ink"}`}
+            >
+              Demo
+            </button>
+            <button
+              onClick={() => switchSource("live")}
+              className={`flex items-center gap-1.5 rounded-md px-3 py-1 transition-colors ${source === "live" ? "bg-card font-medium text-ink shadow-sm" : "text-muted2 hover:text-ink"}`}
+            >
+              <span className={`h-1.5 w-1.5 rounded-full ${source === "live" ? "bg-pos" : "bg-muted"}`} /> Live
+            </button>
+          </div>
         </div>
       </div>
 
+      {/* Source note */}
+      <div className="rounded-xl border hairline bg-[#FBFAF8] px-4 py-3 text-sm text-muted2">
+        <span className="mr-1.5 text-[#B5852A]">◆</span>
+        {source === "live"
+          ? data?.sourceNote ??
+            "Live data · real Bitget tokenized prices and Yahoo underlying — the gaps are actual tracking errors."
+          : "Demo data · a reproducible simulation that exercises all six regimes and shows active strategy routing for a clear narrative."}
+      </div>
+
+      {error && <ErrorNote message={`Couldn't load the board: ${error}`} />}
+
       {/* Agent Crowding Index */}
-      <Panel>
-        <SectionTitle
-          title="Agent Crowding Index"
-          hint="Market-wide read of how crowded the tokenized-stock tape looks to AI agents"
-          right={
-            marketClosed ? (
-              <Badge className="border-amber-500/40 bg-amber-500/10 text-amber-300">
-                US market closed · token market live
-              </Badge>
-            ) : (
-              <Badge className="border-emerald-500/40 bg-emerald-500/10 text-emerald-300">
-                US market open
-              </Badge>
-            )
-          }
-        />
+      <div className="panel p-6">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">Agent Crowding Index</p>
         {ci ? (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-            <div className="flex items-baseline gap-2">
-              <span className="mono text-4xl font-semibold">{ci.index}</span>
-              <span className="text-muted">/ 100</span>
+          <>
+            <div className="mt-2 flex items-center gap-3">
+              <span className="mono text-5xl font-semibold leading-none text-ink">{ci.index}</span>
+              <Badge className={crowdingPill(ci.index)}>{ci.state}</Badge>
+              <span className="ml-auto text-xs text-muted">{ci.extremeAssets} extreme asset(s)</span>
             </div>
-            <div className="flex-1">
-              <div className="mb-1 flex items-center justify-between text-sm">
-                <span className="font-medium">{ci.state}</span>
-                <span className="text-muted">{ci.extremeAssets} extreme asset(s)</span>
+            <p className="mt-3 max-w-2xl text-sm text-muted2">{ci.recommendation}</p>
+
+            {/* gradient scale + marker */}
+            <div className="mt-4">
+              <div className="relative h-2 w-full rounded-full" style={{ background: "linear-gradient(90deg,#1F8A5B 0%,#B5852A 55%,#C8453B 100%)" }}>
+                <span
+                  className="absolute top-1/2 h-3.5 w-[3px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-ink"
+                  style={{ left: `${Math.max(0, Math.min(100, ci.index))}%` }}
+                />
               </div>
-              <Bar value={ci.index} max={100} className={crowdingBarColor(ci.index)} height="h-2" />
-              <p className="mt-2 text-xs text-muted">{ci.recommendation}</p>
+              <div className="mt-1 flex justify-between text-[11px] text-muted">
+                <span>0 · calm</span>
+                <span>50</span>
+                <span>crowded · 100</span>
+              </div>
             </div>
-          </div>
+
+            {/* components */}
+            <div className="mt-5 grid gap-x-8 gap-y-3 sm:grid-cols-2">
+              {ci.components.map((c) => (
+                <div key={c.label}>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted2">{c.label}</span>
+                    <span className="mono text-ink">{c.value}</span>
+                  </div>
+                  <div className="mt-1 h-px w-full bg-[#ECECE8]">
+                    <div className="h-px bg-ink/60" style={{ width: `${Math.max(0, Math.min(100, c.value))}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         ) : loading ? (
           <Spinner />
         ) : (
-          <p className="py-2 text-sm text-muted">
-            {error ? "Crowding index unavailable." : "No data."}
-          </p>
+          <p className="py-2 text-sm text-muted2">{error ? "Crowding index unavailable." : "No data."}</p>
         )}
-      </Panel>
+      </div>
 
-      {/* Strategy board */}
-      <Panel>
-        <SectionTitle
-          title="Strategy Board"
-          hint="One routing decision per asset — click a row for the full proof packet"
-          right={
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="flex overflow-hidden rounded-lg border hairline text-xs">
-                <button
-                  onClick={() => switchSource("sim")}
-                  className={`px-3 py-1 ${source === "sim" ? "bg-cyan-500/20 text-cyan-200" : "text-muted hover:bg-white/5"}`}
-                >
-                  Demo
-                </button>
-                <button
-                  onClick={() => switchSource("live")}
-                  className={`px-3 py-1 ${source === "live" ? "bg-emerald-500/20 text-emerald-200" : "text-muted hover:bg-white/5"}`}
-                >
-                  ⚡ Live
-                </button>
-              </div>
-              <label className="flex cursor-pointer items-center gap-2 text-xs text-muted">
-                <input
-                  type="checkbox"
-                  checked={llm}
-                  onChange={(e) => {
-                    setLoading(true);
-                    setLlm(e.target.checked);
-                  }}
-                  className="accent-cyan-400"
-                />
-                AI reasoning (Qwen)
-              </label>
-            </div>
+      {/* Asset cards */}
+      {loading && !data ? (
+        <Spinner
+          label={
+            source === "live"
+              ? "Fetching live Bitget + Yahoo data…"
+              : llm
+                ? "Running council with Qwen…"
+                : "Scanning market…"
           }
         />
-
-        {error && (
-          <p className="rounded-lg border border-rose-500/40 bg-rose-500/10 p-3 text-sm text-rose-300">
-            {error}
-          </p>
-        )}
-
-        {loading && !data ? (
-          <Spinner
-            label={
-              source === "live"
-                ? "Fetching live Bitget + Yahoo data…"
-                : llm
-                  ? "Running council with Qwen…"
-                  : "Scanning market…"
-            }
-          />
-        ) : data ? (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b hairline text-left text-xs uppercase tracking-wider text-muted">
-                  <th className="py-2 pr-3 font-medium">Asset</th>
-                  <th className="py-2 pr-3 font-medium">Regime</th>
-                  <th className="py-2 pr-3 font-medium">Strategy</th>
-                  <th className="py-2 pr-3 text-right font-medium">Crowd</th>
-                  <th className="py-2 pr-3 text-right font-medium">Gap</th>
-                  <th className="py-2 pr-3 text-right font-medium">Conf</th>
-                  <th className="py-2 pr-3 text-right font-medium">Agree</th>
-                  <th className="py-2 pr-3 text-center font-medium">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.decisions.map(({ packet: p }) => (
-                  <tr
-                    key={p.asset}
-                    className="group border-b hairline transition-colors last:border-0 hover:bg-white/5"
-                  >
-                    <td className="py-3 pr-3">
-                      <Link href={`/asset/${p.asset}`} className="block">
-                        <div className="font-semibold">{p.asset}</div>
-                        <div className="mono text-xs text-muted">
-                          ${p.market.tokenPrice.toFixed(2)}
-                        </div>
-                      </Link>
-                    </td>
-                    <td className="py-3 pr-3">
-                      <Badge className={regimeColor(p.marketRegime)}>{p.marketRegime}</Badge>
-                    </td>
-                    <td className={`py-3 pr-3 font-medium ${strategyColor(p.selectedStrategy)}`}>
+      ) : data ? (
+        <>
+          <div className="grid gap-4 md:grid-cols-2">
+            {data.decisions.map(({ packet: p }) => (
+              <Link key={p.asset} href={`/asset/${p.asset}`} className="panel block p-5 transition-shadow hover:shadow-[0_2px_12px_rgba(10,10,10,0.05)]">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-lg font-semibold tracking-tight text-ink">{p.asset}</span>
+                      <span className="text-xs text-muted">{ASSETS[p.asset as AssetSymbol]?.name}</span>
+                    </div>
+                    <div className="mt-1.5">
+                      <Badge className={regimeColor(p.marketRegime)}>
+                        <span className={`h-1.5 w-1.5 rounded-full ${regimeDot(p.marketRegime)}`} />
+                        {p.marketRegime}
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <Badge className={actionColor(p.finalAction)}>
+                      {p.finalAction === "long_paper" ? "▲ " : p.finalAction === "short_paper" ? "▼ " : "— "}
+                      {actionLabel(p.finalAction)}
+                    </Badge>
+                    <div className={`mt-1.5 text-xs font-medium ${strategyColor(p.selectedStrategy)}`}>
                       {strategyShort(p.selectedStrategy)}
-                    </td>
-                    <td className={`mono py-3 pr-3 text-right ${crowdColor(p.scores.crowdScore)}`}>
-                      {p.scores.crowdScore}
-                    </td>
-                    <td className="mono py-3 pr-3 text-right">{pctStr(p.scores.fairValueGapPct)}</td>
-                    <td className="mono py-3 pr-3 text-right">
-                      {(p.scores.strategyConfidence * 100).toFixed(0)}%
-                    </td>
-                    <td className="mono py-3 pr-3 text-right text-muted">
+                    </div>
+                  </div>
+                </div>
+
+                <div className="my-3">
+                  <Sparkline points={sparks[p.asset] ?? []} />
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 border-t hairline pt-3">
+                  <div>
+                    <div className="text-[10px] uppercase tracking-wider text-muted">Crowd</div>
+                    <div className={`mono mt-0.5 text-sm font-medium ${crowdColor(p.scores.crowdScore)}`}>{p.scores.crowdScore}</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] uppercase tracking-wider text-muted">FV Gap</div>
+                    <div className={`mono mt-0.5 text-sm font-medium ${p.scores.fairValueGapPct >= 0 ? "text-neg" : "text-pos-ink"}`}>
+                      {pctStr(p.scores.fairValueGapPct)}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] uppercase tracking-wider text-muted">Council</div>
+                    <div className="mono mt-0.5 text-sm font-medium text-ink">
                       {p.agentAgreement.agree}/{p.agentAgreement.total}
-                    </td>
-                    <td className="py-3 pr-3 text-center">
-                      <Badge className={actionColor(p.finalAction)}>{actionLabel(p.finalAction)}</Badge>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {data.source === "live" &&
-              data.decisions.every((d) => d.packet.finalAction === "no_trade") && (
-                <p className="mt-3 rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-2.5 text-xs text-emerald-200/90">
-                  Live tracking errors are small right now, so the system stands aside —
-                  disciplined No-Trade. Switch to <strong>Demo</strong> to see active routing
-                  across all six regimes.
-                </p>
-              )}
-            <p className="mt-3 text-xs text-muted">
-              Data:{" "}
-              <span className="mono">
-                {data.source === "live"
-                  ? "LIVE — Bitget tokenized prices + Yahoo underlying (real tracking error)"
-                  : "Demo scenario (seeded, reproducible)"}
-              </span>{" "}
-              · Reasoning:{" "}
-              <span className="mono">
-                {data.decisions[0]?.packet.reasoningSource === "qwen"
-                  ? `Qwen (${data.decisions[0]?.packet.reasoningModel})`
-                  : "deterministic narrator"}
-              </span>{" "}
-              · {new Date(data.timestamp).toUTCString()}
-            </p>
-            {data.sourceNote && (
-              <p className="mt-1 text-xs text-amber-300/80">{data.sourceNote}</p>
-            )}
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
-        ) : null}
-      </Panel>
+
+          {data.source === "live" && data.decisions.every((d) => d.packet.finalAction === "no_trade") && (
+            <p className="rounded-xl border border-pos/25 bg-pos/8 p-3 text-xs text-pos-ink">
+              Live tracking errors are small right now, so the system stands aside — disciplined No-Trade.
+              Switch to <strong>Demo</strong> to see active routing across all six regimes.
+            </p>
+          )}
+
+          <p className="text-xs text-muted">
+            Data:{" "}
+            <span className="mono">
+              {data.source === "live"
+                ? "LIVE — Bitget tokenized prices + Yahoo underlying (real tracking error)"
+                : "Demo scenario (seeded, reproducible)"}
+            </span>{" "}
+            · Reasoning:{" "}
+            <span className="mono">
+              {data.decisions[0]?.packet.reasoningSource === "qwen"
+                ? `Qwen (${data.decisions[0]?.packet.reasoningModel})`
+                : "deterministic narrator"}
+            </span>
+          </p>
+        </>
+      ) : null}
     </div>
   );
 }

@@ -53,22 +53,22 @@ export default function PriceChart({
     <div className="w-full">
       <svg viewBox={`0 0 ${W} ${H}`} className="h-56 w-full" preserveAspectRatio="none">
         {underlying.length > 1 && (
-          <path d={ulPath} fill="none" stroke="#fbbf24" strokeWidth="1.5" strokeOpacity="0.85" strokeDasharray="1 0" />
+          <path d={ulPath} fill="none" stroke="#B5852A" strokeWidth="1.5" strokeOpacity="0.9" strokeDasharray="1 0" />
         )}
-        <path d={tokenPath} fill="none" stroke="#22d3ee" strokeWidth="2" strokeLinejoin="round" />
+        <path d={tokenPath} fill="none" stroke="#3B6FB5" strokeWidth="2" strokeLinejoin="round" />
       </svg>
       <div className="mt-1.5 flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
         <div className="flex gap-3">
           <span className="flex items-center gap-1.5">
-            <span className="inline-block h-2 w-3 rounded-sm bg-cyan-400" /> token (24/7)
+            <span className="inline-block h-2 w-3 rounded-sm bg-info" /> token (24/7)
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="inline-block h-2 w-3 rounded-sm bg-amber-400" /> underlying (market hours)
+            <span className="inline-block h-2 w-3 rounded-sm bg-warn" /> underlying (market hours)
           </span>
         </div>
         <div>
           {gapPct !== null && (
-            <span className={gapPct >= 0 ? "text-rose-300" : "text-emerald-300"}>
+            <span className={gapPct >= 0 ? "text-neg" : "text-pos-ink"}>
               {source === "live" ? "live gap" : "gap"} {gapPct >= 0 ? "+" : ""}{gapPct.toFixed(2)}%
             </span>
           )}

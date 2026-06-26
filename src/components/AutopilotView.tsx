@@ -17,23 +17,23 @@ const ORDER: Strategy[] = [
 ];
 
 const FILL: Record<Strategy, string> = {
-  "Momentum Follow": "#34d399",
-  "CounterFlow Fade": "#fb7185",
-  "Fair-Value Convergence": "#22d3ee",
-  "Volatility Breakout": "#fbbf24",
-  "Earnings Drift": "#a78bfa",
-  "Macro Rebalance": "#fb923c",
-  "No-Trade / Risk-Off": "#64748b",
+  "Momentum Follow": "#1F8A5B",
+  "CounterFlow Fade": "#C8453B",
+  "Fair-Value Convergence": "#3B6FB5",
+  "Volatility Breakout": "#B5852A",
+  "Earnings Drift": "#9A6F1E",
+  "Macro Rebalance": "#CC8B43",
+  "No-Trade / Risk-Off": "#9A9A95",
 };
 
 const BAR_CLASS: Record<Strategy, string> = {
-  "Momentum Follow": "bg-emerald-400",
-  "CounterFlow Fade": "bg-rose-400",
-  "Fair-Value Convergence": "bg-cyan-400",
-  "Volatility Breakout": "bg-amber-400",
-  "Earnings Drift": "bg-violet-400",
-  "Macro Rebalance": "bg-orange-400",
-  "No-Trade / Risk-Off": "bg-slate-500",
+  "Momentum Follow": "bg-pos",
+  "CounterFlow Fade": "bg-neg",
+  "Fair-Value Convergence": "bg-info",
+  "Volatility Breakout": "bg-warn",
+  "Earnings Drift": "bg-event",
+  "Macro Rebalance": "bg-warn",
+  "No-Trade / Risk-Off": "bg-muted",
 };
 
 function Timeline({ data }: { data: AutopilotResult }) {
@@ -134,7 +134,7 @@ export default function AutopilotView() {
         <SectionTitle title="Rotation Log" />
         <div className="space-y-1.5">
           {data.notes.map((n, i) => (
-            <p key={i} className="text-sm text-slate-300">
+            <p key={i} className="text-sm text-ink2">
               • {n}
             </p>
           ))}

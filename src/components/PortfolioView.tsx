@@ -16,7 +16,7 @@ function usdSigned(n: number | null | undefined): string {
   return `${n >= 0 ? "+" : "-"}$${Math.abs(n).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
 }
 const pnlClass = (n: number | null | undefined) =>
-  n == null ? "" : n >= 0 ? "text-emerald-300" : "text-rose-300";
+  n == null ? "" : n >= 0 ? "text-pos-ink" : "text-neg";
 
 export default function PortfolioView() {
   const [data, setData] = useState<(PortfolioSnapshot & { source?: string }) | null>(null);
@@ -106,28 +106,28 @@ export default function PortfolioView() {
             and closes them on stop / take / time. Shared paper portfolio (one global instance, not
             per-user) — ${data.startingCapital.toLocaleString()} starting capital · source{" "}
             <span className="mono">{data.source === "live" ? "live" : "demo"}</span>
-            {stale && <span className="text-amber-300"> · live data unavailable, showing last snapshot</span>}.
+            {stale && <span className="text-warn"> · live data unavailable, showing last snapshot</span>}.
           </p>
         </div>
         <div className="flex gap-2">
           <button
             onClick={tick}
             disabled={!!busy}
-            className="rounded-lg border border-cyan-500/40 bg-cyan-500/10 px-3 py-1.5 text-sm font-medium text-cyan-200 hover:bg-cyan-500/20 disabled:opacity-50"
+            className="rounded-lg border border-line2 bg-[#F0EFEA] px-3 py-1.5 text-sm font-medium text-ink hover:bg-[#E8E7E1] disabled:opacity-50"
           >
             {busy === "tick" ? "Ticking…" : "▶ Run tick"}
           </button>
           <button
             onClick={reset}
             disabled={!!busy}
-            className="rounded-lg border hairline bg-white/5 px-3 py-1.5 text-sm font-medium text-slate-200 hover:bg-white/10 disabled:opacity-50"
+            className="rounded-lg border hairline bg-[#F7F7F5] px-3 py-1.5 text-sm font-medium text-ink hover:bg-[#EFEEE9] disabled:opacity-50"
           >
             {busy === "reset" ? "…" : "Reset"}
           </button>
         </div>
       </div>
 
-      {note && <p className="rounded-lg border border-cyan-500/30 bg-cyan-500/5 p-2.5 text-sm text-cyan-200">{note}</p>}
+      {note && <p className="rounded-lg border border-line bg-[#F4F3EF] p-2.5 text-sm text-ink">{note}</p>}
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         <Stat label="Equity" value={usd(data.equityUsd)} />
@@ -150,7 +150,7 @@ export default function PortfolioView() {
       <Panel>
         <SectionTitle title="Open Positions" hint={data.source === "live" ? "Marked to live token prices" : "Marked to demo prices"} />
         {data.open.length === 0 ? (
-          <p className="py-6 text-sm text-muted">No open positions. Click <span className="text-cyan-300">Run tick</span> to scan live markets and open any actionable setups.</p>
+          <p className="py-6 text-sm text-muted">No open positions. Click <span className="text-info">Run tick</span> to scan live markets and open any actionable setups.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -169,7 +169,7 @@ export default function PortfolioView() {
                 {data.open.map((pos) => (
                   <tr key={pos.id} className="border-b hairline last:border-0">
                     <td className="py-2 pr-3 font-medium">
-                      <Link href={`/asset/${pos.asset}`} className="hover:text-cyan-300">{pos.asset}</Link>
+                      <Link href={`/asset/${pos.asset}`} className="hover:text-info">{pos.asset}</Link>
                     </td>
                     <td className={`mono py-2 pr-3 uppercase ${directionColor(pos.direction)}`}>{pos.direction}</td>
                     <td className="py-2 pr-3 text-xs">{strategyShort(pos.strategy)}</td>
@@ -195,7 +195,7 @@ export default function PortfolioView() {
         ) : (
           <div className="max-h-[420px] overflow-auto">
             <table className="w-full text-sm">
-              <thead className="sticky top-0 bg-panel">
+              <thead className="sticky top-0 bg-card">
                 <tr className="border-b hairline text-left text-xs uppercase tracking-wider text-muted">
                   <th className="py-2 pr-3 font-medium">Asset</th>
                   <th className="py-2 pr-3 font-medium">Dir</th>

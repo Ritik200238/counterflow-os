@@ -1,38 +1,37 @@
 @import "tailwindcss";
 
-/* CounterFlow OS — dark "operating system" terminal aesthetic. */
-
-:root {
-  --bg: #070a0f;
-  --panel: #0e131c;
-  --panel-2: #131a26;
-  --border: #1f2937;
-  --text: #e2e8f0;
-  --muted: #8995a9;
-}
+/* CounterFlow OS — warm, light "research desk" aesthetic. */
 
 @theme inline {
-  --color-bg: var(--bg);
-  --color-panel: var(--panel);
-  --color-panel2: var(--panel-2);
-  --color-line: var(--border);
-  --color-muted: var(--muted);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: #f6f4f0;
+  --color-card: #ffffff;
+  --color-sidebar: #fbfaf8;
+  --color-line: #ECECE8;
+  --color-line2: #E6E6E2;
+  --color-ink: #0a0a0a;
+  --color-ink2: #1d1d1f;
+  --color-muted: #9a9a95;
+  --color-muted2: #6b7280;
+  --color-pos: #1f8a5b;
+  --color-pos-ink: #1a6e49;
+  --color-neg: #c8453b;
+  --color-warn: #b5852a;
+  --color-info: #3b6fb5;
+  --color-event: #9a6f1e;
+  --font-sans: var(--font-outfit);
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
-  background:
-    radial-gradient(1200px 600px at 80% -10%, rgba(34, 211, 238, 0.06), transparent),
-    radial-gradient(900px 500px at -10% 10%, rgba(16, 185, 129, 0.05), transparent),
-    var(--bg);
-  color: var(--text);
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 ::-webkit-scrollbar {
@@ -40,7 +39,7 @@ body {
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #243044;
+  background: #dcdcd6;
   border-radius: 8px;
 }
 ::-webkit-scrollbar-track {
@@ -48,21 +47,23 @@ body {
 }
 
 .mono {
-  font-family: var(--font-mono), ui-monospace, monospace;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-feature-settings: "tnum" 1;
 }
 
 .panel {
-  background: linear-gradient(180deg, var(--panel), var(--panel-2));
-  border: 1px solid var(--border);
-  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid #ececE8;
+  border-radius: 16px;
 }
 
 .hairline {
-  border-color: var(--border);
+  border-color: #ececE8;
 }
 
+/* Soft tinted "pill" backgrounds for badges (used via ui.ts helpers). */
 .glow-cyan {
-  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.25), 0 8px 30px rgba(34, 211, 238, 0.06);
+  box-shadow: 0 1px 2px rgba(10, 10, 10, 0.04), 0 8px 28px rgba(10, 10, 10, 0.05);
 }
 
 a {

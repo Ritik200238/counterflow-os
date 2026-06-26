@@ -14,17 +14,17 @@ interface CurrentRow {
 const ASSETS = ASSET_SYMBOLS;
 
 const verdictBadge: Record<SignalVerdict, string> = {
-  predictive: "border-emerald-500/40 bg-emerald-500/10 text-emerald-300",
-  weak: "border-amber-500/40 bg-amber-500/10 text-amber-300",
-  noise: "border-slate-500/40 bg-slate-500/10 text-slate-400",
+  predictive: "border-pos/25 bg-pos/10 text-pos-ink",
+  weak: "border-warn/25 bg-warn/10 text-warn",
+  noise: "border-line2 bg-[#F2F2EF] text-muted2",
 };
 
 const catColor: Record<string, string> = {
-  Momentum: "text-emerald-300",
-  Value: "text-cyan-300",
-  Crowding: "text-rose-300",
-  Liquidity: "text-sky-300",
-  Macro: "text-amber-300",
+  Momentum: "text-pos-ink",
+  Value: "text-info",
+  Crowding: "text-neg",
+  Liquidity: "text-info",
+  Macro: "text-warn",
 };
 
 export default function SignalZoo() {
@@ -95,14 +95,14 @@ export default function SignalZoo() {
                     <td className="py-2 pr-3 font-medium">{r.label}</td>
                     <td className={`py-2 pr-3 ${catColor[r.category] ?? ""}`}>{r.category}</td>
                     <td className="mono py-2 pr-3 text-xs text-muted">{r.formula}</td>
-                    <td className={`mono py-2 pr-3 text-right ${r.ic >= 0 ? "text-emerald-300" : "text-rose-300"}`}>
+                    <td className={`mono py-2 pr-3 text-right ${r.ic >= 0 ? "text-pos-ink" : "text-neg"}`}>
                       {r.ic >= 0 ? "+" : ""}{r.ic.toFixed(3)}
                     </td>
                     <td className="py-2 pr-3">
                       <Badge className={verdictBadge[r.verdict]}>{r.verdict}</Badge>
                     </td>
                     {ASSETS.map((a) => (
-                      <td key={a} className="mono py-2 pr-2 text-right text-slate-300">
+                      <td key={a} className="mono py-2 pr-2 text-right text-ink2">
                         {cur && cur.values[a] !== undefined ? cur.values[a].toFixed(2) : "—"}
                       </td>
                     ))}

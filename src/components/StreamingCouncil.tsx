@@ -62,35 +62,35 @@ export default function StreamingCouncil({ symbol, source }: { symbol: string; s
   }
 
   return (
-    <div className="rounded-xl border hairline bg-black/30 p-4">
+    <div className="rounded-xl border hairline bg-[#F7F7F5] p-4">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-slate-200">
+        <span className="text-sm font-medium text-ink">
           Council stream <span className="text-muted">· {streamSource === "live" ? "live" : "demo"}</span>
         </span>
         <button
           onClick={start}
           disabled={streaming}
-          className="rounded-lg border border-cyan-500/40 bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-200 hover:bg-cyan-500/20 disabled:opacity-50"
+          className="rounded-lg border border-line2 bg-[#F0EFEA] px-3 py-1 text-xs font-medium text-ink hover:bg-[#E8E7E1] disabled:opacity-50"
         >
           {streaming ? "Deliberating…" : "▶ Watch the council deliberate"}
         </button>
       </div>
 
-      {streamError && <p className="mt-2 text-xs text-rose-300">{streamError}</p>}
+      {streamError && <p className="mt-2 text-xs text-neg">{streamError}</p>}
 
       {(agents.length > 0 || verdict) && (
         <div className="mt-3 space-y-1.5">
           {agents.map((a, i) => (
             <div key={i} className="flex items-center justify-between gap-2 text-xs">
               <span className={agentColor(a.agent)}>{a.agent}</span>
-              <span className="flex-1 truncate px-2 text-slate-400">{a.summary}</span>
-              <Badge className="border-slate-500/40 bg-slate-500/10 text-slate-300">
+              <span className="flex-1 truncate px-2 text-muted2">{a.summary}</span>
+              <Badge className="border-line2 bg-[#F2F2EF] text-ink2">
                 {stanceLabel(a.vote.stance)} · {(a.vote.confidence * 100).toFixed(0)}%
               </Badge>
             </div>
           ))}
           {verdict && (
-            <div className="mt-2 rounded-lg border border-cyan-500/30 bg-cyan-500/5 p-2.5 text-xs text-slate-200">
+            <div className="mt-2 rounded-lg border border-line bg-[#F4F3EF] p-2.5 text-xs text-ink">
               Verdict: <span className="font-semibold">{strategyShort(verdict.selectedStrategy as never)}</span>{" "}
               → {actionLabel(verdict.finalAction)} · agreement {verdict.agreement.agree}/{verdict.agreement.total} ·
               risk {verdict.risk.state}

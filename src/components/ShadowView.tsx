@@ -67,15 +67,15 @@ export default function ShadowView() {
             </thead>
             <tbody>
               {rows.map((r, i) => (
-                <tr key={r.name} className={`border-b hairline last:border-0 ${i === 0 ? "bg-cyan-500/5" : ""}`}>
+                <tr key={r.name} className={`border-b hairline last:border-0 ${i === 0 ? "bg-[#F4F3EF]" : ""}`}>
                   <td className="py-2.5 pr-3">
-                    <span className={i === 0 ? "font-semibold text-cyan-200" : "text-slate-200"}>{r.name}</span>
+                    <span className={i === 0 ? "font-semibold text-ink" : "text-ink"}>{r.name}</span>
                     <div className="text-xs text-muted">{r.description}</div>
                   </td>
                   <td className="mono py-2.5 pr-3 text-right">{r.trades}</td>
                   <td className="mono py-2.5 pr-3 text-right">{r.winRate === null ? "—" : `${(r.winRate * 100).toFixed(0)}%`}</td>
                   <td className="mono py-2.5 pr-3 text-right">{pctStr(r.avgReturnPct)}</td>
-                  <td className={`mono py-2.5 pr-3 text-right ${r.totalPnlPct === bestTotal ? "text-emerald-300" : r.totalPnlPct < 0 ? "text-rose-300" : "text-slate-200"}`}>
+                  <td className={`mono py-2.5 pr-3 text-right ${r.totalPnlPct === bestTotal ? "text-pos-ink" : r.totalPnlPct < 0 ? "text-neg" : "text-ink"}`}>
                     {pctStr(r.totalPnlPct)}
                   </td>
                 </tr>
@@ -107,7 +107,7 @@ export default function ShadowView() {
                 <span className="mono w-20 text-xs text-muted">{b.trades} trades</span>
                 <span className="mono w-12 text-right text-sm">{b.winRate === null ? "—" : `${(b.winRate * 100).toFixed(0)}%`}</span>
                 <div className="flex-1">
-                  <Bar value={b.winRate ?? 0} max={1} className="bg-emerald-400" />
+                  <Bar value={b.winRate ?? 0} max={1} className="bg-pos" />
                 </div>
               </div>
             ))}
@@ -118,7 +118,7 @@ export default function ShadowView() {
           <SectionTitle title="Behavioral flags" />
           <div className="space-y-2">
             {d.flags.map((f, i) => (
-              <p key={i} className="text-sm text-slate-300">• {f}</p>
+              <p key={i} className="text-sm text-ink2">• {f}</p>
             ))}
           </div>
         </Panel>

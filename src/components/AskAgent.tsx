@@ -89,12 +89,12 @@ export default function AskAgent() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && ask(input)}
             placeholder="e.g. Why did you fade TSLAx?"
-            className="mono flex-1 rounded-lg border hairline bg-black/30 px-3 py-2 text-sm text-slate-100 outline-none focus:border-cyan-500/50"
+            className="mono flex-1 rounded-lg border hairline bg-[#F7F7F5] px-3 py-2 text-sm text-ink outline-none focus:border-ink/30"
           />
           <button
             onClick={() => ask(input)}
             disabled={busy || !input.trim()}
-            className="rounded-lg border border-cyan-500/40 bg-cyan-500/15 px-4 py-2 text-sm font-medium text-cyan-200 hover:bg-cyan-500/25 disabled:opacity-50"
+            className="rounded-lg bg-ink px-4 py-2 text-sm font-medium text-white hover:bg-ink2 disabled:opacity-50"
           >
             {busy ? "Thinking…" : "Ask"}
           </button>
@@ -106,7 +106,7 @@ export default function AskAgent() {
                 key={s}
                 onClick={() => ask(s)}
                 disabled={busy}
-                className="rounded-full border hairline bg-white/5 px-2.5 py-1 text-xs text-muted hover:bg-white/10 hover:text-slate-200 disabled:opacity-50"
+                className="rounded-full border hairline bg-[#F7F7F5] px-2.5 py-1 text-xs text-muted hover:bg-[#EFEEE9] hover:text-ink disabled:opacity-50"
               >
                 {s}
               </button>
@@ -117,16 +117,16 @@ export default function AskAgent() {
             Live data
           </label>
         </div>
-        {error && <p className="mt-3 text-sm text-rose-300">{error}</p>}
+        {error && <p className="mt-3 text-sm text-neg">{error}</p>}
       </Panel>
 
       {turns.map((t, i) => (
         <Panel key={i}>
           <div className="mb-2 flex items-center gap-2">
-            <span className="text-cyan-300">▸</span>
-            <span className="font-medium text-slate-200">{t.q}</span>
+            <span className="text-info">▸</span>
+            <span className="font-medium text-ink">{t.q}</span>
           </div>
-          <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-300">{t.answer}</p>
+          <p className="whitespace-pre-wrap text-sm leading-relaxed text-ink2">{t.answer}</p>
           {t.referenced.length > 0 && (
             <div className="mt-3 flex flex-wrap gap-2">
               {t.referenced.map((r) => (
